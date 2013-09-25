@@ -1,0 +1,505 @@
+//---------------------------------------------------------------------------
+// Copyright (C) 2013 Krzysztof Grochocki
+//
+// This file is part of NotifyMe
+//
+// NotifyMe is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 3, or (at your option)
+// any later version.
+//
+// NotifyMe is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with GNU Radio; see the file COPYING. If not, write to
+// the Free Software Foundation, Inc., 51 Franklin Street,
+// Boston, MA 02110-1301, USA.
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#include <windows.h>
+#pragma hdrstop
+#pragma argsused
+#include <PluginAPI.h>
+#include "SettingsFrm.h"
+#include <inifiles.hpp>
+#include <XMLDoc.hpp>
+#include <IdHashMessageDigest.hpp>
+
+int WINAPI DllEntryPoint(HINSTANCE hinst, unsigned long reason, void* lpReserved)
+{
+	return 1;
+}
+//---------------------------------------------------------------------------
+
+//Uchwyt-do-formy-ustawien---------------------------------------------------
+TSettingsForm *hSettingsForm;
+//Struktury-glowne-----------------------------------------------------------
+TPluginLink PluginLink;
+TPluginInfo PluginInfo;
+//Lista-JID-wraz-z-nickami---------------------------------------------------
+TMemIniFile* ContactsNickList = new TMemIniFile(ChangeFileExt(Application->ExeName, ".INI"));
+//ID-wywolania-enumeracji-listy-kontaktow------------------------------------
+DWORD ReplyListID = 0;
+//Sciezka-do-pliku-ze-statystykami-------------------------------------------
+UnicodeString StatsFilePath;
+//SETTINGS-------------------------------------------------------------------
+bool OnVersionChk;
+bool OnLastChk;
+int CloudTimeOut;
+bool StatsChk;
+//FORWARD-AQQ-HOOKS----------------------------------------------------------
+INT_PTR __stdcall OnColorChange(WPARAM wParam, LPARAM lParam);
+INT_PTR __stdcall OnContactsUpdate(WPARAM wParam, LPARAM lParam);
+INT_PTR __stdcall OnReplyList(WPARAM wParam, LPARAM lParam);
+INT_PTR __stdcall OnThemeChanged(WPARAM wParam, LPARAM lParam);
+INT_PTR __stdcall OnXMLIDDebug(WPARAM wParam, LPARAM lParam);
+//---------------------------------------------------------------------------
+
+//Pobieranie sciezki katalogu prywatnego wtyczek
+UnicodeString GetPluginUserDir()
+{
+  return StringReplace((wchar_t*)PluginLink.CallService(AQQ_FUNCTION_GETPLUGINUSERDIR,0,0), "\\", "\\\\", TReplaceFlags() << rfReplaceAll);
+}
+//---------------------------------------------------------------------------
+
+//Pobieranie sciezki do skorki kompozycji
+UnicodeString GetThemeSkinDir()
+{
+  return StringReplace((wchar_t*)PluginLink.CallService(AQQ_FUNCTION_GETTHEMEDIR,0,0), "\\", "\\\\", TReplaceFlags() << rfReplaceAll) + "\\\\Skin";
+}
+//---------------------------------------------------------------------------
+
+//Sprawdzanie czy  wlaczona jest zaawansowana stylizacja okien
+bool ChkSkinEnabled()
+{
+  TStrings* IniList = new TStringList();
+  IniList->SetText((wchar_t*)PluginLink.CallService(AQQ_FUNCTION_FETCHSETUP,0,0));
+  TMemIniFile *Settings = new TMemIniFile(ChangeFileExt(Application->ExeName, ".INI"));
+  Settings->SetStrings(IniList);
+  delete IniList;
+  UnicodeString SkinsEnabled = Settings->ReadString("Settings","UseSkin","1");
+  delete Settings;
+  return StrToBool(SkinsEnabled);
+}
+//---------------------------------------------------------------------------
+
+//Sprawdzanie ustawien animacji AlphaControls
+bool ChkThemeAnimateWindows()
+{
+  TStrings* IniList = new TStringList();
+  IniList->SetText((wchar_t*)PluginLink.CallService(AQQ_FUNCTION_FETCHSETUP,0,0));
+  TMemIniFile *Settings = new TMemIniFile(ChangeFileExt(Application->ExeName, ".INI"));
+  Settings->SetStrings(IniList);
+  delete IniList;
+  UnicodeString AnimateWindowsEnabled = Settings->ReadString("Theme","ThemeAnimateWindows","1");
+  delete Settings;
+  return StrToBool(AnimateWindowsEnabled);
+}
+//---------------------------------------------------------------------------
+bool ChkThemeGlowing()
+{
+  TStrings* IniList = new TStringList();
+  IniList->SetText((wchar_t*)PluginLink.CallService(AQQ_FUNCTION_FETCHSETUP,0,0));
+  TMemIniFile *Settings = new TMemIniFile(ChangeFileExt(Application->ExeName, ".INI"));
+  Settings->SetStrings(IniList);
+  delete IniList;
+  UnicodeString GlowingEnabled = Settings->ReadString("Theme","ThemeGlowing","1");
+  delete Settings;
+  return StrToBool(GlowingEnabled);
+}
+//---------------------------------------------------------------------------
+
+//Pobieranie ustawien koloru AlphaControls
+int GetHUE()
+{
+  return (int)PluginLink.CallService(AQQ_SYSTEM_COLORGETHUE,0,0);
+}
+//---------------------------------------------------------------------------
+int GetSaturation()
+{
+  return (int)PluginLink.CallService(AQQ_SYSTEM_COLORGETSATURATION,0,0);
+}
+//---------------------------------------------------------------------------
+
+//Pobieranie pseudonimu kontaktu podajac jego JID
+UnicodeString GetContactNick(UnicodeString JID)
+{
+  UnicodeString Nick = ContactsNickList->ReadString("Nick",JID,"");
+  if(Nick.IsEmpty()) return JID;
+  return Nick;
+}
+//---------------------------------------------------------------------------
+
+//Pobieranie nazwy konta przez podanie jego indeksu
+UnicodeString GetAccountJID(int UserIdx)
+{
+  TPluginStateChange PluginStateChange;
+  PluginLink.CallService(AQQ_FUNCTION_GETNETWORKSTATE,(WPARAM)&PluginStateChange,UserIdx);
+  return (wchar_t*)PluginStateChange.JID;;
+}
+//---------------------------------------------------------------------------
+
+//Pokazanie chmurki informacyjnej
+void ShowNotification(UnicodeString Text)
+{
+  TPluginShowInfo PluginShowInfo;
+  ZeroMemory(&PluginShowInfo, sizeof(TPluginShowInfo));
+  PluginShowInfo.cbSize = sizeof(TPluginShowInfo);
+  PluginShowInfo.Event = tmeInfo;
+  PluginShowInfo.Text = Text.w_str();
+  PluginShowInfo.ImagePath = (wchar_t*)PluginLink.CallService(AQQ_FUNCTION_GETPNG_FILEPATH,21,0);
+  PluginShowInfo.TimeOut = 1000 * CloudTimeOut;
+  PluginLink.CallService(AQQ_FUNCTION_SHOWINFO,0,(LPARAM)(&PluginShowInfo));
+}
+//---------------------------------------------------------------------------
+
+//Zapisywanie informacji do pliku ze statystykami
+void SaveInfoToStatsFile(UnicodeString JID, UnicodeString Nick, int Type, UnicodeString Target)
+{
+  //Pobieranie aktualnej daty oraz czasu
+  TDateTime CurrTime = TDateTime::CurrentDateTime();
+  UnicodeString CurrTimeStr = CurrTime.FormatString("yyyy-mm-dd hh:nn:ss");
+  //Tworzenie nowego dokumentu XML
+  _di_IXMLDocument XMLDoc = NewXMLDocument();
+  _di_IXMLNode MainNode;
+  //Wczytanie utworzonego juz pliku XML
+  if(FileExists(StatsFilePath))
+  {
+	XMLDoc->LoadFromFile(StatsFilePath);
+	MainNode = XMLDoc->DocumentElement;
+  }
+  //Tworzenie pliku XML
+  else MainNode = XMLDoc->AddChild("items");
+  //Dodanie nowego elementu
+  _di_IXMLNode ChildNode = MainNode->AddChild("item");
+  ChildNode->Attributes["jid"] = JID;
+  ChildNode->Attributes["nick"] = Nick;
+  ChildNode->Attributes["type"] = Type;
+  ChildNode->Attributes["target"] = Target;
+  ChildNode->Attributes["time"] = CurrTimeStr;
+  //Zapisywanie zmian w pliku
+  XMLDoc->SaveToFile(StatsFilePath);
+  //Usuwanie dokumentu XML
+  //delete XMLDoc;
+}
+//---------------------------------------------------------------------------
+
+//Hook na zmiane kolorystyki AlphaControls
+INT_PTR __stdcall OnColorChange(WPARAM wParam, LPARAM lParam)
+{
+  //Okno ustawien zostalo juz stworzone
+  if(hSettingsForm)
+  {
+	//Wlaczona zaawansowana stylizacja okien
+	if(ChkSkinEnabled())
+	{
+	  hSettingsForm->sSkinManager->HueOffset = wParam;
+	  hSettingsForm->sSkinManager->Saturation = lParam;
+	}
+  }
+
+  return 0;
+}
+//---------------------------------------------------------------------------
+
+//Hook na zmianê stanu kontaktu
+INT_PTR __stdcall OnContactsUpdate(WPARAM wParam, LPARAM lParam)
+{
+  //Pobieranie danych nt. kontaktu
+  TPluginContact ContactsUpdateContact = *(PPluginContact)wParam;
+  //Kontakt nie pochodzi z wtyczki
+  if(!ContactsUpdateContact.FromPlugin)
+  {
+    //Pobieranie identyfikatora kontatku
+	UnicodeString JID = (wchar_t*)ContactsUpdateContact.JID;
+	//Pobranie pseudonimu kontatku
+	UnicodeString Nick = (wchar_t*)ContactsUpdateContact.Nick;
+	//Zapisywanie pseudonimu kontatku do pamieci
+	ContactsNickList->WriteString("Nick",JID,Nick);
+  }
+
+  return 0;
+}
+//---------------------------------------------------------------------------
+
+//Hook na enumeracje listy kontatkow
+INT_PTR __stdcall OnReplyList(WPARAM wParam, LPARAM lParam)
+{
+  //Sprawdzanie ID wywolania enumeracji
+  if(wParam==ReplyListID)
+  {
+	//Pobieranie danych nt. kontaktu
+	TPluginContact ReplyListContact = *(PPluginContact)lParam;
+	//Kontakt nie pochodzi z wtyczki
+	if(!ReplyListContact.FromPlugin)
+	{
+	  //Pobieranie identyfikatora kontatku
+	  UnicodeString JID = (wchar_t*)ReplyListContact.JID;
+	  //Pobranie pseudonimu kontatku
+	  UnicodeString Nick = (wchar_t*)ReplyListContact.Nick;
+	  //Zapisywanie pseudonimu kontatku do pamieci
+	  ContactsNickList->WriteString("Nick",JID,Nick);
+    }
+  }
+
+  return 0;
+}
+//---------------------------------------------------------------------------
+
+//Hook na zmiane kompozycji
+INT_PTR __stdcall OnThemeChanged(WPARAM wParam, LPARAM lParam)
+{
+  //Okno ustawien zostalo juz stworzone
+  if(hSettingsForm)
+  {
+	//Wlaczona zaawansowana stylizacja okien
+	if(ChkSkinEnabled())
+	{
+	  //Pobieranie sciezki nowej aktywnej kompozycji
+	  UnicodeString ThemeSkinDir = StringReplace((wchar_t*)lParam, "\\", "\\\\", TReplaceFlags() << rfReplaceAll) + "\\\\Skin";
+	  //Plik zaawansowanej stylizacji okien istnieje
+	  if(FileExists(ThemeSkinDir + "\\\\Skin.asz"))
+	  {
+		//Dane pliku zaawansowanej stylizacji okien
+		ThemeSkinDir = StringReplace(ThemeSkinDir, "\\\\", "\\", TReplaceFlags() << rfReplaceAll);
+		hSettingsForm->sSkinManager->SkinDirectory = ThemeSkinDir;
+		hSettingsForm->sSkinManager->SkinName = "Skin.asz";
+		//Ustawianie animacji AlphaControls
+		if(ChkThemeAnimateWindows()) hSettingsForm->sSkinManager->AnimEffects->FormShow->Time = 200;
+		else hSettingsForm->sSkinManager->AnimEffects->FormShow->Time = 0;
+		hSettingsForm->sSkinManager->Effects->AllowGlowing = ChkThemeGlowing();
+		//Zmiana kolorystyki AlphaControls
+        hSettingsForm->sSkinManager->HueOffset = GetHUE();
+	    hSettingsForm->sSkinManager->Saturation = GetSaturation();
+		//Aktywacja skorkowania AlphaControls
+		hSettingsForm->sSkinManager->Active = true;
+	  }
+	  //Brak pliku zaawansowanej stylizacji okien
+	  else hSettingsForm->sSkinManager->Active = false;
+	}
+	//Zaawansowana stylizacja okien wylaczona
+	else hSettingsForm->sSkinManager->Active = false;
+  }
+
+  return 0;
+}
+//---------------------------------------------------------------------------
+
+//Hook na odbieranie pakietow XML zawierajace ID
+INT_PTR __stdcall OnXMLIDDebug(WPARAM wParam, LPARAM lParam)
+{
+  //Pobranie pakietu XML
+  UnicodeString XML = (wchar_t*)wParam;
+  //Wczytanie pakietu XML do dokumentu XML
+  _di_IXMLDocument XMLDoc = LoadXMLData(XML);
+  _di_IXMLNode MainNode = XMLDoc->DocumentElement;
+  //Sprawdzanie nazwy glownej galezi
+  if(MainNode->NodeName=="iq")
+  {
+    //Sprawdzanie typu pakietu
+	UnicodeString type = MainNode->Attributes["type"];
+	if(type=="get")
+	{
+	  //Enumeracja podgalezi
+	  int NodesCount = MainNode->ChildNodes->GetCount();
+	  for(int Count=0;Count<NodesCount;Count++)
+	  {
+		//Pobieranie podgalezi
+		_di_IXMLNode ChildNodes = MainNode->ChildNodes->GetNode(Count);
+		//Sprawdzanie nazwy podgalezi
+		if(ChildNodes->NodeName=="query")
+		{
+		  //Pobieranie wartosci xmlns
+		  UnicodeString xmlns = ChildNodes->Attributes["xmlns"];
+		  //Sprawdzanie wersji oprogramowania
+		  if((xmlns=="jabber:iq:version")&&(OnVersionChk))
+		  {
+			//Pobieranie nadawcy pakietu XML
+			TPluginXMLChunk XMLChunk = *(PPluginXMLChunk)lParam;
+			UnicodeString From = (wchar_t*)XMLChunk.From;
+			if(From.Pos("/")) From = From.Delete(From.Pos("/"),From.Length());
+			//Anty self-check
+			if(From!=GetAccountJID(XMLChunk.UserIdx))
+			{
+			  //Pokazanie chmurki informacyjnej
+			  ShowNotification(GetContactNick(From) + " sprawdza wersjê Twojego oprogramowania.");
+			  //Zapisywanie informacji do pliku ze statystykami
+			  if(StatsChk) SaveInfoToStatsFile(From,GetContactNick(From),1,GetAccountJID(XMLChunk.UserIdx));
+			}
+		  }
+		  //Sprawdzanie ostatniej aktywnosci
+		  else if((xmlns=="jabber:iq:last")&&(OnLastChk))
+		  {
+			//Pobieranie nadawcy pakietu XML
+			TPluginXMLChunk XMLChunk = *(PPluginXMLChunk)lParam;
+			UnicodeString From = (wchar_t*)XMLChunk.From;
+			if(From.Pos("/")) From = From.Delete(From.Pos("/"),From.Length());
+			//Anty self-check
+			if(From!=GetAccountJID(XMLChunk.UserIdx))
+			{
+			  //Pokazanie chmurki informacyjnej
+			  ShowNotification(GetContactNick(From) + " sprawdza Twoj¹ ostatni¹ aktywnoœæ.");
+			  //Zapisywanie informacji do pliku ze statystykami
+			  if(StatsChk) SaveInfoToStatsFile(From,GetContactNick(From),2,GetAccountJID(XMLChunk.UserIdx));
+            }
+		  }
+		}
+	  }
+	}
+  }
+
+  return 0;
+}
+//---------------------------------------------------------------------------
+
+//Odczyt ustawien
+void LoadSettings()
+{
+  TIniFile *Ini = new TIniFile(GetPluginUserDir()+"\\\\NotifyMe\\\\Settings.ini");
+  OnVersionChk = Ini->ReadBool("Settings","OnVersion",true);
+  OnLastChk = Ini->ReadBool("Settings","OnLast",true);
+  CloudTimeOut = Ini->ReadInteger("Settings","CloudTimeOut",6);
+  StatsChk = Ini->ReadBool("Settings","Stats",false);
+  delete Ini;
+}
+//---------------------------------------------------------------------------
+
+//Zapisywanie zasobów
+void ExtractRes(wchar_t* FileName, wchar_t* ResName, wchar_t* ResType)
+{
+  TPluginTwoFlagParams PluginTwoFlagParams;
+  PluginTwoFlagParams.cbSize = sizeof(TPluginTwoFlagParams);
+  PluginTwoFlagParams.Param1 = ResName;
+  PluginTwoFlagParams.Param2 = ResType;
+  PluginTwoFlagParams.Flag1 = (int)HInstance;
+  PluginLink.CallService(AQQ_FUNCTION_SAVERESOURCE,(WPARAM)&PluginTwoFlagParams,(LPARAM)FileName);
+}
+//---------------------------------------------------------------------------
+
+//Obliczanie sumy kontrolnej pliku
+UnicodeString MD5File(UnicodeString FileName)
+{
+  if(FileExists(FileName))
+  {
+	UnicodeString Result;
+    TFileStream *fs;
+
+	fs = new TFileStream(FileName, fmOpenRead | fmShareDenyWrite);
+	try
+	{
+	  TIdHashMessageDigest5 *idmd5= new TIdHashMessageDigest5();
+	  try
+	  {
+	    Result = idmd5->HashStreamAsHex(fs);
+	  }
+	  __finally
+	  {
+	    delete idmd5;
+	  }
+    }
+	__finally
+    {
+	  delete fs;
+    }
+
+    return Result;
+  }
+  else
+   return 0;
+}
+//---------------------------------------------------------------------------
+
+extern "C" INT_PTR __declspec(dllexport) __stdcall Load(PPluginLink Link)
+{
+  //Linkowanie wtyczki z komunikatorem
+  PluginLink = *Link;
+  //Sciezka folderu prywatnego wtyczek
+  UnicodeString PluginUserDir = GetPluginUserDir();
+  //Tworzeniu katalogu z ustawieniami wtyczki
+  if(!DirectoryExists(PluginUserDir+"\\\\NotifyMe"))
+   CreateDir(PluginUserDir+"\\\\NotifyMe");
+  //Sciezka do pliku ze statystykami
+  StatsFilePath = PluginUserDir+"\\\\NotifyMe\\\\Stats.xml";
+  //Wypakiwanie ikonki NotifyMe.dll.png
+  //E9C441E4118D0DDAA67361FE0423B39A
+  if(!DirectoryExists(PluginUserDir + "\\\\Shared"))
+   CreateDir(PluginUserDir + "\\\\Shared");
+  if(!FileExists(PluginUserDir + "\\\\Shared\\\\NotifyMe.dll.png"))
+   ExtractRes((PluginUserDir + "\\\\Shared\\\\NotifyMe.dll.png").w_str(),L"SHARED",L"DATA");
+  else if(MD5File(PluginUserDir + "\\\\Shared\\\\NotifyMe.dll.png")!="E9C441E4118D0DDAA67361FE0423B39A")
+   ExtractRes((PluginUserDir + "\\\\Shared\\\\NotifyMe.dll.png").w_str(),L"SHARED",L"DATA");
+  //Odczyt ustawien
+  LoadSettings();
+  //Hook na zmiane kolorystyki AlphaControls
+  PluginLink.HookEvent(AQQ_SYSTEM_COLORCHANGE,OnColorChange);
+  //Hook na zmianê stanu kontaktu
+  PluginLink.HookEvent(AQQ_CONTACTS_UPDATE,OnContactsUpdate);
+  //Hook na enumeracje listy kontatkow
+  PluginLink.HookEvent(AQQ_CONTACTS_REPLYLIST,OnReplyList);
+  //Hook na zmiane kompozycji
+  PluginLink.HookEvent(AQQ_SYSTEM_THEMECHANGED, OnThemeChanged);
+  //Hook na odbieranie pakietow XML zawierajace ID
+  PluginLink.HookEvent(AQQ_SYSTEM_XMLIDDEBUG,OnXMLIDDebug);
+  //Wszystkie moduly zostaly zaladowane
+  if(PluginLink.CallService(AQQ_SYSTEM_MODULESLOADED,0,0))
+  {
+	//Pobranie ID dla enumeracji kontaktów
+	ReplyListID = GetTickCount();
+	//Wywolanie enumeracji kontaktow
+	PluginLink.CallService(AQQ_CONTACTS_REQUESTLIST,(WPARAM)ReplyListID,0);
+  }
+
+  return 0;
+}
+//---------------------------------------------------------------------------
+
+extern "C" INT_PTR __declspec(dllexport) __stdcall Unload()
+{
+  //Wyladowanie wszystkich hookow
+  PluginLink.UnhookEvent(OnColorChange);
+  PluginLink.UnhookEvent(OnContactsUpdate);
+  PluginLink.UnhookEvent(OnReplyList);
+  PluginLink.UnhookEvent(OnThemeChanged);
+  PluginLink.UnhookEvent(OnXMLIDDebug);
+
+  return 0;
+}
+//---------------------------------------------------------------------------
+
+//Ustawienia wtyczki
+extern "C" INT_PTR __declspec(dllexport)__stdcall Settings()
+{
+  //Przypisanie uchwytu do formy ustawien
+  if(!hSettingsForm)
+  {
+	Application->Handle = (HWND)SettingsForm;
+	hSettingsForm = new TSettingsForm(Application);
+  }
+  //Pokaznie okna ustawien
+  hSettingsForm->Show();
+
+  return 0;
+}
+//---------------------------------------------------------------------------
+
+//Informacje o wtyczce
+extern "C" PPluginInfo __declspec(dllexport) __stdcall AQQPluginInfo(DWORD AQQVersion)
+{
+  PluginInfo.cbSize = sizeof(TPluginInfo);
+  PluginInfo.ShortName = L"NotifyMe";
+  PluginInfo.Version = PLUGIN_MAKE_VERSION(1,0,0,0);
+  PluginInfo.Description = L"Powiadamia o sprawdzaniu naszej wersji oprogramowania oraz ostatniej aktywnoœci przez innego u¿ytkownika.";
+  PluginInfo.Author = L"Krzysztof Grochocki (Beherit)";
+  PluginInfo.AuthorMail = L"kontakt@beherit.pl";
+  PluginInfo.Copyright = L"Krzysztof Grochocki (Beherit)";
+  PluginInfo.Homepage = L"http://beherit.pl";
+  PluginInfo.Flag = 0;
+  PluginInfo.ReplaceDefaultModule = 0;
+
+  return &PluginInfo;
+}
+//---------------------------------------------------------------------------
