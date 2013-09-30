@@ -40,6 +40,10 @@ TSettingsForm *hSettingsForm;
 //Struktury-glowne-----------------------------------------------------------
 TPluginLink PluginLink;
 TPluginInfo PluginInfo;
+//Uchwyt-do-okna-timera------------------------------------------------------
+HWND hTimerFrm;
+//Lista-JID-oraz-ID-timerow--------------------------------------------------
+TMemIniFile* AntySpamList = new TMemIniFile(ChangeFileExt(Application->ExeName, ".INI"));
 //Lista-JID-wraz-z-nickami---------------------------------------------------
 TMemIniFile* ContactsNickList = new TMemIniFile(ChangeFileExt(Application->ExeName, ".INI"));
 //ID-wywolania-enumeracji-listy-kontaktow------------------------------------
@@ -57,6 +61,8 @@ INT_PTR __stdcall OnContactsUpdate(WPARAM wParam, LPARAM lParam);
 INT_PTR __stdcall OnReplyList(WPARAM wParam, LPARAM lParam);
 INT_PTR __stdcall OnThemeChanged(WPARAM wParam, LPARAM lParam);
 INT_PTR __stdcall OnXMLIDDebug(WPARAM wParam, LPARAM lParam);
+//FORWARD-TIMER--------------------------------------------------------------
+LRESULT CALLBACK TimerFrmProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 //---------------------------------------------------------------------------
 
 //Pobieranie sciezki katalogu prywatnego wtyczek
@@ -185,6 +191,42 @@ void SaveInfoToStatsFile(UnicodeString JID, UnicodeString Nick, int Type, Unicod
   XMLDoc->SaveToFile(StatsFilePath);
   //Usuwanie dokumentu XML
   //delete XMLDoc;
+}
+//---------------------------------------------------------------------------
+
+//Procka okna timera
+LRESULT CALLBACK TimerFrmProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+  //Notfikacja timera
+  if(uMsg==WM_TIMER)
+  {
+	//Zatrzymanie timera
+	 KillTimer(hTimerFrm,wParam);
+	//Pobranie ID timera
+	int TimerID = wParam;
+	//Timer sprawdzania wersji oprogramowania
+	if(AntySpamList->ValueExists("Version",TimerID))
+	{
+	  //Pobieranie identyfikatora kontaktu
+	  UnicodeString From = AntySpamList->ReadString("Version",TimerID,"");
+	  //Wylaczanie zabezpieczenia
+	  AntySpamList->DeleteKey("Version",TimerID);
+	  AntySpamList->DeleteKey("Version",From);
+	}
+	//Timer sprawdzania ostatniej aktywnosci
+	else if(AntySpamList->ValueExists("Last",TimerID))
+	{
+	  //Pobieranie identyfikatora kontaktu
+	  UnicodeString From = AntySpamList->ReadString("Last",TimerID,"");
+	  //Wylaczanie zabezpieczenia
+	  AntySpamList->DeleteKey("Last",TimerID);
+	  AntySpamList->DeleteKey("Last",From);
+	}
+
+	return 0;
+  }
+
+  return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 //---------------------------------------------------------------------------
 
@@ -325,8 +367,19 @@ INT_PTR __stdcall OnXMLIDDebug(WPARAM wParam, LPARAM lParam)
 			//Anty self-check
 			if(From!=GetAccountJID(XMLChunk.UserIdx))
 			{
-			  //Pokazanie chmurki informacyjnej
-			  ShowNotification(GetContactNick(From) + " sprawdza wersjê Twojego oprogramowania.");
+              //Zabezpieczenie przed spamem chmurek
+			  if(!AntySpamList->ValueExists("Version",From))
+			  {
+				//Wygenerowanie losowego ID timera
+				int TimerID = PluginLink.CallService(AQQ_FUNCTION_GETNUMID,0,0);
+				//Zapisanie informacji o wywolaniu
+				AntySpamList->WriteInteger("Version",From,TimerID);
+				AntySpamList->WriteString("Version",TimerID,From);
+				//Wlaczenie timera
+				SetTimer(hTimerFrm,TimerID,1000*CloudTimeOut,(TIMERPROC)TimerFrmProc);
+				//Pokazanie chmurki informacyjnej
+				ShowNotification(GetContactNick(From) + " sprawdza wersjê Twojego oprogramowania.");
+			  }
 			  //Zapisywanie informacji do pliku ze statystykami
 			  if(StatsChk) SaveInfoToStatsFile(From,GetContactNick(From),1,GetAccountJID(XMLChunk.UserIdx));
 			}
@@ -341,8 +394,19 @@ INT_PTR __stdcall OnXMLIDDebug(WPARAM wParam, LPARAM lParam)
 			//Anty self-check
 			if(From!=GetAccountJID(XMLChunk.UserIdx))
 			{
-			  //Pokazanie chmurki informacyjnej
-			  ShowNotification(GetContactNick(From) + " sprawdza Twoj¹ ostatni¹ aktywnoœæ.");
+			  //Zabezpieczenie przed spamem chmurek
+			  if(!AntySpamList->ValueExists("Last",From))
+			  {
+				//Wygenerowanie losowego ID timera
+				int TimerID = PluginLink.CallService(AQQ_FUNCTION_GETNUMID,0,0);
+				//Zapisanie informacji o wywolaniu
+				AntySpamList->WriteInteger("Last",From,TimerID);
+				AntySpamList->WriteString("Last",TimerID,From);
+				//Wlaczenie timera
+				SetTimer(hTimerFrm,TimerID,1000*CloudTimeOut,(TIMERPROC)TimerFrmProc);
+				//Pokazanie chmurki informacyjnej
+				ShowNotification(GetContactNick(From) + " sprawdza Twoj¹ ostatni¹ aktywnoœæ.");
+			  }
 			  //Zapisywanie informacji do pliku ze statystykami
 			  if(StatsChk) SaveInfoToStatsFile(From,GetContactNick(From),2,GetAccountJID(XMLChunk.UserIdx));
             }
@@ -452,6 +516,23 @@ extern "C" INT_PTR __declspec(dllexport) __stdcall Load(PPluginLink Link)
 	//Wywolanie enumeracji kontaktow
 	PluginLink.CallService(AQQ_CONTACTS_REQUESTLIST,(WPARAM)ReplyListID,0);
   }
+  //Rejestowanie klasy okna timera
+  WNDCLASSEX wincl;
+  wincl.cbSize = sizeof (WNDCLASSEX);
+  wincl.style = 0;
+  wincl.lpfnWndProc = TimerFrmProc;
+  wincl.cbClsExtra = 0;
+  wincl.cbWndExtra = 0;
+  wincl.hInstance = HInstance;
+  wincl.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+  wincl.hCursor = LoadCursor(NULL, IDC_ARROW);
+  wincl.hbrBackground = (HBRUSH)COLOR_BACKGROUND;
+  wincl.lpszMenuName = NULL;
+  wincl.lpszClassName = L"TNotifyMeTimer";
+  wincl.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+  RegisterClassEx(&wincl);
+  //Tworzenie okna timera
+  hTimerFrm = CreateWindowEx(0, L"TNotifyMeTimer", L"",	0, 0, 0, 0, 0, NULL, NULL, HInstance, NULL);
 
   return 0;
 }
@@ -459,6 +540,10 @@ extern "C" INT_PTR __declspec(dllexport) __stdcall Load(PPluginLink Link)
 
 extern "C" INT_PTR __declspec(dllexport) __stdcall Unload()
 {
+  //Usuwanie okna timera
+  DestroyWindow(hTimerFrm);
+  //Wyrejestowanie klasy okna timera
+  UnregisterClass(L"TNotifyMeTimer",HInstance);
   //Wyladowanie wszystkich hookow
   PluginLink.UnhookEvent(OnColorChange);
   PluginLink.UnhookEvent(OnContactsUpdate);
@@ -491,7 +576,7 @@ extern "C" PPluginInfo __declspec(dllexport) __stdcall AQQPluginInfo(DWORD AQQVe
 {
   PluginInfo.cbSize = sizeof(TPluginInfo);
   PluginInfo.ShortName = L"NotifyMe";
-  PluginInfo.Version = PLUGIN_MAKE_VERSION(1,0,0,0);
+  PluginInfo.Version = PLUGIN_MAKE_VERSION(1,1,0,0);
   PluginInfo.Description = L"Powiadamia o sprawdzaniu naszej wersji oprogramowania oraz ostatniej aktywnoœci przez innego u¿ytkownika.";
   PluginInfo.Author = L"Krzysztof Grochocki (Beherit)";
   PluginInfo.AuthorMail = L"kontakt@beherit.pl";
