@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------
-// Copyright (C) 2013 Krzysztof Grochocki
+// Copyright (C) 2013-2014 Krzysztof Grochocki
 //
 // This file is part of NotifyMe
 //
@@ -43,6 +43,7 @@
 #include "sEdit.hpp"
 #include "sSpinEdit.hpp"
 #include "sListView.hpp"
+#include <Vcl.Menus.hpp>
 //---------------------------------------------------------------------------
 class TSettingsForm : public TForm
 {
@@ -72,6 +73,8 @@ __published:	// IDE-managed Components
 	TAction *aGetDataFromXML;
 	TsCheckBox *ExInfoCheckBox;
 	TAction *aShowExtInfo;
+	TPopupMenu *PopupMenu;
+	TMenuItem *aDeleteAll;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormShow(TObject *Sender);
 	void __fastcall aExitExecute(TObject *Sender);
@@ -89,6 +92,7 @@ __published:	// IDE-managed Components
 	void __fastcall StatsTabSheetShow(TObject *Sender);
 	void __fastcall aShowExtInfoExecute(TObject *Sender);
 	void __fastcall ExInfoCheckBoxClick(TObject *Sender);
+	void __fastcall aDeleteAllClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
 	__fastcall TSettingsForm(TComponent* Owner);

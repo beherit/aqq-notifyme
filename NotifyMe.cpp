@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------
-// Copyright (C) 2013 Krzysztof Grochocki
+// Copyright (C) 2013-2014 Krzysztof Grochocki
 //
 // This file is part of NotifyMe
 //
@@ -145,7 +145,7 @@ UnicodeString GetAccountJID(int UserIdx)
 {
   TPluginStateChange PluginStateChange;
   PluginLink.CallService(AQQ_FUNCTION_GETNETWORKSTATE,(WPARAM)&PluginStateChange,UserIdx);
-  return (wchar_t*)PluginStateChange.JID;;
+  return (wchar_t*)PluginStateChange.JID;
 }
 //---------------------------------------------------------------------------
 
@@ -189,8 +189,30 @@ void SaveInfoToStatsFile(UnicodeString JID, UnicodeString Nick, int Type, Unicod
   ChildNode->Attributes["time"] = CurrTimeStr;
   //Zapisywanie zmian w pliku
   XMLDoc->SaveToFile(StatsFilePath);
-  //Usuwanie dokumentu XML
-  //delete XMLDoc;
+}
+//---------------------------------------------------------------------------
+void SaveInfoToStatsFileEx(UnicodeString JID, UnicodeString Nick, UnicodeString Type, UnicodeString Target, UnicodeString Time)
+{
+  //Tworzenie nowego dokumentu XML
+  _di_IXMLDocument XMLDoc = NewXMLDocument();
+  _di_IXMLNode MainNode;
+  //Wczytanie utworzonego juz pliku XML
+  if(FileExists(StatsFilePath))
+  {
+	XMLDoc->LoadFromFile(StatsFilePath);
+	MainNode = XMLDoc->DocumentElement;
+  }
+  //Tworzenie pliku XML
+  else MainNode = XMLDoc->AddChild("items");
+  //Dodanie nowego elementu
+  _di_IXMLNode ChildNode = MainNode->AddChild("item");
+  ChildNode->Attributes["jid"] = JID;
+  ChildNode->Attributes["nick"] = Nick;
+  ChildNode->Attributes["type"] = Type;
+  ChildNode->Attributes["target"] = Target;
+  ChildNode->Attributes["time"] = Time;
+  //Zapisywanie zmian w pliku
+  XMLDoc->SaveToFile(StatsFilePath);
 }
 //---------------------------------------------------------------------------
 
@@ -258,10 +280,12 @@ INT_PTR __stdcall OnContactsUpdate(WPARAM wParam, LPARAM lParam)
   {
     //Pobieranie identyfikatora kontatku
 	UnicodeString JID = (wchar_t*)ContactsUpdateContact.JID;
+	//Pobieranie indeksu konta
+	int UserIdx = ContactsUpdateContact.UserIdx;
 	//Pobranie pseudonimu kontatku
 	UnicodeString Nick = (wchar_t*)ContactsUpdateContact.Nick;
 	//Zapisywanie pseudonimu kontatku do pamieci
-	ContactsNickList->WriteString("Nick",JID,Nick);
+	ContactsNickList->WriteString("Nick",JID+":"+IntToStr(UserIdx),Nick);
   }
 
   return 0;
@@ -281,10 +305,12 @@ INT_PTR __stdcall OnReplyList(WPARAM wParam, LPARAM lParam)
 	{
 	  //Pobieranie identyfikatora kontatku
 	  UnicodeString JID = (wchar_t*)ReplyListContact.JID;
+	  //Pobieranie indeksu konta
+	  int UserIdx = ReplyListContact.UserIdx;
 	  //Pobranie pseudonimu kontatku
 	  UnicodeString Nick = (wchar_t*)ReplyListContact.Nick;
 	  //Zapisywanie pseudonimu kontatku do pamieci
-	  ContactsNickList->WriteString("Nick",JID,Nick);
+	  ContactsNickList->WriteString("Nick",JID+":"+IntToStr(UserIdx),Nick);
     }
   }
 
@@ -364,6 +390,7 @@ INT_PTR __stdcall OnXMLIDDebug(WPARAM wParam, LPARAM lParam)
 			TPluginXMLChunk XMLChunk = *(PPluginXMLChunk)lParam;
 			UnicodeString From = (wchar_t*)XMLChunk.From;
 			if(From.Pos("/")) From = From.Delete(From.Pos("/"),From.Length());
+			int UserIdx = XMLChunk.UserIdx;
 			//Anty self-check
 			if(From!=GetAccountJID(XMLChunk.UserIdx))
 			{
@@ -378,10 +405,10 @@ INT_PTR __stdcall OnXMLIDDebug(WPARAM wParam, LPARAM lParam)
 				//Wlaczenie timera
 				SetTimer(hTimerFrm,TimerID,1000*CloudTimeOut,(TIMERPROC)TimerFrmProc);
 				//Pokazanie chmurki informacyjnej
-				ShowNotification(GetContactNick(From) + " sprawdza wersjê Twojego oprogramowania.");
+				ShowNotification(GetContactNick(From+":"+IntToStr(UserIdx)) + " sprawdza wersjê Twojego oprogramowania.");
 			  }
 			  //Zapisywanie informacji do pliku ze statystykami
-			  if(StatsChk) SaveInfoToStatsFile(From,GetContactNick(From),1,GetAccountJID(XMLChunk.UserIdx));
+			  if(StatsChk) SaveInfoToStatsFile(From,GetContactNick(From+":"+IntToStr(UserIdx)),1,GetAccountJID(XMLChunk.UserIdx));
 			}
 		  }
 		  //Sprawdzanie ostatniej aktywnosci
@@ -391,6 +418,7 @@ INT_PTR __stdcall OnXMLIDDebug(WPARAM wParam, LPARAM lParam)
 			TPluginXMLChunk XMLChunk = *(PPluginXMLChunk)lParam;
 			UnicodeString From = (wchar_t*)XMLChunk.From;
 			if(From.Pos("/")) From = From.Delete(From.Pos("/"),From.Length());
+			int UserIdx = XMLChunk.UserIdx;
 			//Anty self-check
 			if(From!=GetAccountJID(XMLChunk.UserIdx))
 			{
@@ -405,10 +433,10 @@ INT_PTR __stdcall OnXMLIDDebug(WPARAM wParam, LPARAM lParam)
 				//Wlaczenie timera
 				SetTimer(hTimerFrm,TimerID,1000*CloudTimeOut,(TIMERPROC)TimerFrmProc);
 				//Pokazanie chmurki informacyjnej
-				ShowNotification(GetContactNick(From) + " sprawdza Twoj¹ ostatni¹ aktywnoœæ.");
+				ShowNotification(GetContactNick(From+":"+IntToStr(UserIdx)) + " sprawdza Twoj¹ ostatni¹ aktywnoœæ.");
 			  }
 			  //Zapisywanie informacji do pliku ze statystykami
-			  if(StatsChk) SaveInfoToStatsFile(From,GetContactNick(From),2,GetAccountJID(XMLChunk.UserIdx));
+			  if(StatsChk) SaveInfoToStatsFile(From,GetContactNick(From+":"+IntToStr(UserIdx)),2,GetAccountJID(XMLChunk.UserIdx));
             }
 		  }
 		}
@@ -576,11 +604,11 @@ extern "C" PPluginInfo __declspec(dllexport) __stdcall AQQPluginInfo(DWORD AQQVe
 {
   PluginInfo.cbSize = sizeof(TPluginInfo);
   PluginInfo.ShortName = L"NotifyMe";
-  PluginInfo.Version = PLUGIN_MAKE_VERSION(1,1,0,0);
+  PluginInfo.Version = PLUGIN_MAKE_VERSION(1,1,2,0);
   PluginInfo.Description = L"Powiadamia o sprawdzaniu naszej wersji oprogramowania oraz ostatniej aktywnoœci przez innego u¿ytkownika.";
-  PluginInfo.Author = L"Krzysztof Grochocki (Beherit)";
+  PluginInfo.Author = L"Krzysztof Grochocki";
   PluginInfo.AuthorMail = L"kontakt@beherit.pl";
-  PluginInfo.Copyright = L"Krzysztof Grochocki (Beherit)";
+  PluginInfo.Copyright = L"Krzysztof Grochocki";
   PluginInfo.Homepage = L"http://beherit.pl";
   PluginInfo.Flag = 0;
   PluginInfo.ReplaceDefaultModule = 0;

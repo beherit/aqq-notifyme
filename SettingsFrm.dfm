@@ -221,10 +221,6 @@ object SettingsForm: TSettingsForm
       OnShow = SettingsTabSheetShow
       SkinData.CustomColor = False
       SkinData.CustomFont = False
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object NotificationLabel: TsLabel
         Left = 12
         Top = 12
@@ -303,10 +299,6 @@ object SettingsForm: TSettingsForm
       OnShow = StatsTabSheetShow
       SkinData.CustomColor = False
       SkinData.CustomFont = False
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object sListView: TsListView
         Left = 12
         Top = 12
@@ -323,7 +315,7 @@ object SettingsForm: TSettingsForm
         BoundLabel.UseSkinColor = True
         SkinData.SkinSection = 'EDIT'
         Align = alCustom
-        Anchors = [akLeft, akTop, akRight]
+        Anchors = [akLeft, akTop, akRight, akBottom]
         Columns = <
           item
             Caption = 'Pseudonim'
@@ -352,6 +344,7 @@ object SettingsForm: TSettingsForm
             Width = 0
           end>
         ReadOnly = True
+        RowSelect = True
         TabOrder = 0
         ViewStyle = vsReport
         OnColumnClick = sListViewColumnClick
@@ -377,6 +370,8 @@ object SettingsForm: TSettingsForm
         Align = alCustom
         Anchors = [akRight, akBottom]
         Caption = 'Usu'#324
+        DropDownMenu = PopupMenu
+        Style = bsSplitButton
         TabOrder = 2
         OnClick = DeleteButtonClick
         SkinData.SkinSection = 'BUTTON'
@@ -387,6 +382,8 @@ object SettingsForm: TSettingsForm
         Width = 98
         Height = 20
         Caption = 'Poka'#380' szczeg'#243#322'y'
+        Align = alCustom
+        Anchors = [akLeft, akBottom]
         TabOrder = 3
         OnClick = ExInfoCheckBoxClick
         SkinData.SkinSection = 'CHECKBOX'
@@ -467,6 +464,13 @@ object SettingsForm: TSettingsForm
     object aShowExtInfo: TAction
       Caption = 'aShowExtInfo'
       OnExecute = aShowExtInfoExecute
+    end
+  end
+  object PopupMenu: TPopupMenu
+    Left = 96
+    object aDeleteAll: TMenuItem
+      Caption = 'Usu'#324' wszystko'
+      OnClick = aDeleteAllClick
     end
   end
 end

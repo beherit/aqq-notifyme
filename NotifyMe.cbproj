@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{524E3098-E0E2-4DCF-91E3-49CBBB400A79}</ProjectGuid>
-        <ProjectVersion>14.6</ProjectVersion>
+        <ProjectVersion>15.1</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Release</Config>
@@ -64,7 +64,7 @@
         <ILINK_GenerateImportLibrary>true</ILINK_GenerateImportLibrary>
         <ProjectType>VCppStyleDll</ProjectType>
         <_TCHARMapping>wchar_t</_TCHARMapping>
-        <AllPackageLibs>rtl.lib;vcl.lib;xmlrtl.lib;acntXE4_R.lib;vclimg.lib;vclx.lib;VclSmp.lib;IndyProtocols.lib;IndyCore.lib;IndySystem.lib</AllPackageLibs>
+        <AllPackageLibs>rtl.lib;vcl.lib;xmlrtl.lib;vclimg.lib;vclx.lib;VclSmp.lib;IndyProtocols.lib;IndyCore.lib;IndySystem.lib;acntXE5_R.lib</AllPackageLibs>
         <Multithreaded>true</Multithreaded>
         <DCC_CBuilderOutput>JPHNE</DCC_CBuilderOutput>
         <IntermediateOutputDir>.\$(Platform)\$(Config)</IntermediateOutputDir>
@@ -75,23 +75,25 @@
         <ILINK_TranslatedLibraryPath>$(BDSLIB)\$(PLATFORM)\release\$(LANGDIR);$(ILINK_TranslatedLibraryPath)</ILINK_TranslatedLibraryPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
+        <VerInfo_Release>2</VerInfo_Release>
         <VerInfo_MinorVer>1</VerInfo_MinorVer>
-        <PackageImports>acntXE4_R;adortl;bcbie;bcbsmp;bdertl;bindcomp;bindcompdbx;bindcompfmx;bindcompvcl;bindengine;CustomIPTransport;DataSnapCommon;dbexpress;dbrtl;dbxcds;DbxCommonDriver;DBXInterBaseDriver;dsnap;fmx;fmxase;fmxdae;fmxobj;FMXTee;FmxTeeUI;ibxpress;IndyCore;IndyIPClient;IndyIPCommon;IndyIPServer;IndyProtocols;IndySystem;inet;inetdbbde;inetdbxpress;MetropolisUILiveTile;rtl;soaprtl;svn;Tee;TeeDB;TeeUI;vcl;vclactnband;vcldb;vcldbx;vcldsnap;vclib;vclie;vclimg;vclribbon;VclSmp;vcltouch;vclx;webdsnap;xmlrtl;$(PackageImports)</PackageImports>
+        <PackageImports>acntXE5_R;adortl;bcbie;bcbsmp;bdertl;bindcomp;bindcompdbx;bindcompfmx;bindcompvcl;bindengine;CustomIPTransport;DataSnapCommon;dbexpress;dbrtl;dbxcds;DbxCommonDriver;DBXInterBaseDriver;dsnap;fmx;fmxase;fmxdae;fmxobj;FMXTee;FmxTeeUI;ibxpress;IndyCore;IndyIPClient;IndyIPCommon;IndyIPServer;IndyProtocols;IndySystem;inet;inetdbbde;inetdbxpress;MetropolisUILiveTile;rtl;soaprtl;svn;Tee;TeeDB;TeeUI;vcl;vclactnband;vcldb;vcldbx;vcldsnap;vclib;vclie;vclimg;vclribbon;VclSmp;vcltouch;vclx;webdsnap;xmlrtl;$(PackageImports)</PackageImports>
         <IncludePath>$(BDSINCLUDE)\windows\vcl;$(IncludePath)</IncludePath>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
-        <VerInfo_Keys>FileVersion=1.1.0.0;ProductName=NotifyMe;ProductVersion=1.0.0.0;LegalCopyright=Krzysztof Grochocki (Beherit)</VerInfo_Keys>
+        <VerInfo_Keys>FileVersion=1.1.2.0;ProductName=NotifyMe;ProductVersion=1.0.0.0;LegalCopyright=Krzysztof Grochocki;CompanyName=Beherit Development;LegalTrademarks=Krzysztof Grochocki</VerInfo_Keys>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
+        <VerInfo_Release>2</VerInfo_Release>
         <VerInfo_MinorVer>1</VerInfo_MinorVer>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>FileVersion=1.1.0.0;ProductName=NotifyMe;ProductVersion=1.0.0.0;LegalCopyright=Krzysztof Grochocki (Beherit)</VerInfo_Keys>
+        <VerInfo_Keys>FileVersion=1.1.2.0;ProductName=NotifyMe;ProductVersion=1.0.0.0;LegalCopyright=Krzysztof Grochocki;CompanyName=Beherit Development;LegalTrademarks=Krzysztof Grochocki</VerInfo_Keys>
         <BCC_PCHName_Clang>NotifyMe.h</BCC_PCHName_Clang>
         <IncludePath>$(BDSINCLUDE)\windows\vcl;$(IncludePath)</IncludePath>
-        <PackageImports>acntXE4_R;adortl;bindcomp;bindcompdbx;bindcompfmx;bindcompvcl;bindengine;CustomIPTransport;DataSnapCommon;dbexpress;dbrtl;dbxcds;DbxCommonDriver;DBXInterBaseDriver;dsnap;fmx;fmxase;fmxdae;fmxobj;FMXTee;FmxTeeUI;ibxpress;IndyCore;IndyIPClient;IndyIPCommon;IndyIPServer;IndyProtocols;IndySystem;inet;inetdbxpress;MetropolisUILiveTile;rtl;soaprtl;Tee;TeeDB;TeeUI;vcl;vclactnband;vcldb;vcldsnap;vclib;vclie;vclimg;vclribbon;VclSmp;vcltouch;vclx;webdsnap;xmlrtl;$(PackageImports)</PackageImports>
+        <PackageImports>acntXE5_R;adortl;bindcomp;bindcompdbx;bindcompfmx;bindcompvcl;bindengine;CustomIPTransport;DataSnapCommon;dbexpress;dbrtl;dbxcds;DbxCommonDriver;DBXInterBaseDriver;dsnap;fmx;fmxase;fmxdae;fmxobj;FMXTee;FmxTeeUI;ibxpress;IndyCore;IndyIPClient;IndyIPCommon;IndyIPServer;IndyProtocols;IndySystem;inet;inetdbxpress;MetropolisUILiveTile;rtl;soaprtl;Tee;TeeDB;TeeUI;vcl;vclactnband;vcldb;vcldsnap;vclib;vclie;vclimg;vclribbon;VclSmp;vcltouch;vclx;webdsnap;xmlrtl;$(PackageImports)</PackageImports>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
         <BCC_OptimizeForSpeed>false</BCC_OptimizeForSpeed>
@@ -116,30 +118,34 @@
         <ILINK_TranslatedLibraryPath>$(BDSLIB)\$(PLATFORM)\debug\$(LANGDIR);$(ILINK_TranslatedLibraryPath)</ILINK_TranslatedLibraryPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+        <VerInfo_Release>2</VerInfo_Release>
         <VerInfo_MinorVer>1</VerInfo_MinorVer>
-        <VerInfo_Keys>FileVersion=1.1.0.0;ProductName=NotifyMe;ProductVersion=1.0.0.0;LegalCopyright=Krzysztof Grochocki (Beherit)</VerInfo_Keys>
+        <VerInfo_Keys>FileVersion=1.1.2.0;ProductName=NotifyMe;ProductVersion=1.0.0.0;LegalCopyright=Krzysztof Grochocki;CompanyName=Beherit Development;LegalTrademarks=Krzysztof Grochocki</VerInfo_Keys>
         <LinkPackageImports>rtl.bpi;vcl.bpi;xmlrtl.bpi</LinkPackageImports>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
+        <VerInfo_Release>2</VerInfo_Release>
         <VerInfo_MinorVer>1</VerInfo_MinorVer>
-        <VerInfo_Keys>FileVersion=1.1.0.0;ProductName=NotifyMe;ProductVersion=1.0.0.0;LegalCopyright=Krzysztof Grochocki (Beherit)</VerInfo_Keys>
+        <VerInfo_Keys>FileVersion=1.1.2.0;ProductName=NotifyMe;ProductVersion=1.0.0.0;LegalCopyright=Krzysztof Grochocki;CompanyName=Beherit Development;LegalTrademarks=Krzysztof Grochocki</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <Defines>NDEBUG;$(Defines)</Defines>
         <TASM_Debugging>None</TASM_Debugging>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+        <VerInfo_Release>2</VerInfo_Release>
         <VerInfo_MinorVer>1</VerInfo_MinorVer>
-        <VerInfo_Keys>FileVersion=1.1.0.0;ProductName=NotifyMe;ProductVersion=1.0.0.0;LegalCopyright=Krzysztof Grochocki (Beherit)</VerInfo_Keys>
+        <VerInfo_Keys>FileVersion=1.1.2.0;ProductName=NotifyMe;ProductVersion=1.0.0.0;LegalCopyright=Krzysztof Grochocki;CompanyName=Beherit Development;LegalTrademarks=Krzysztof Grochocki</VerInfo_Keys>
         <Manifest_File>None</Manifest_File>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <LinkPackageStatics>rtl.lib;vcl.lib;xmlrtl.lib;acntXE4_R.lib;vclimg.lib;vclx.lib;VclSmp.lib;IndyProtocols.lib;IndyCore.lib;IndySystem.lib</LinkPackageStatics>
+        <LinkPackageStatics>rtl.lib;vcl.lib;xmlrtl.lib;vclimg.lib;vclx.lib;VclSmp.lib;IndyProtocols.lib;IndyCore.lib;IndySystem.lib;acntXE5_R.lib</LinkPackageStatics>
         <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
+        <VerInfo_Release>2</VerInfo_Release>
         <VerInfo_MinorVer>1</VerInfo_MinorVer>
-        <LinkPackageStatics>rtl.lib;vcl.lib;xmlrtl.lib;acntXE4_R.lib;vclimg.lib;vclx.lib;VclSmp.lib;IndyProtocols.lib;IndyCore.lib;IndySystem.lib</LinkPackageStatics>
-        <VerInfo_Keys>FileVersion=1.1.0.0;ProductName=NotifyMe;ProductVersion=1.0.0.0;LegalCopyright=Krzysztof Grochocki (Beherit)</VerInfo_Keys>
+        <LinkPackageStatics>rtl.lib;vcl.lib;xmlrtl.lib;acntXE5_R.lib;vclimg.lib;vclx.lib;VclSmp.lib;IndyProtocols.lib;IndyCore.lib;IndySystem.lib</LinkPackageStatics>
+        <VerInfo_Keys>FileVersion=1.1.2.0;ProductName=NotifyMe;ProductVersion=1.0.0.0;LegalCopyright=Krzysztof Grochocki;CompanyName=Beherit Development;LegalTrademarks=Krzysztof Grochocki</VerInfo_Keys>
         <BCC_PCHName_Clang>NotifyMe.h</BCC_PCHName_Clang>
     </PropertyGroup>
     <ItemGroup>
