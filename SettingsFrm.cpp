@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------
-// Copyright (C) 2013 Krzysztof Grochocki
+// Copyright (C) 2013-2014 Krzysztof Grochocki
 //
 // This file is part of NotifyMe
 //
@@ -47,6 +47,7 @@ __declspec(dllimport)bool ChkThemeGlowing();
 __declspec(dllimport)int GetHUE();
 __declspec(dllimport)int GetSaturation();
 __declspec(dllimport)void LoadSettings();
+__declspec(dllimport)void SaveInfoToStatsFileEx(UnicodeString JID, UnicodeString Nick, UnicodeString Type, UnicodeString Target, UnicodeString Time);
 //---------------------------------------------------------------------------
 __fastcall TSettingsForm::TSettingsForm(TComponent* Owner)
 	: TForm(Owner)
@@ -102,6 +103,8 @@ void __fastcall TSettingsForm::FormShow(TObject *Sender)
   sPageControl->ActivePage = SettingsTabSheet;
   //Domyslna szerokosc formy
   Width = 332;
+  //Domyslna wysokosc formy
+  Height = 249;
 }
 //---------------------------------------------------------------------------
 
@@ -189,10 +192,34 @@ void __fastcall TSettingsForm::aGetDataFromXMLExecute(TObject *Sender)
 
 void __fastcall TSettingsForm::DeleteButtonClick(TObject *Sender)
 {
-  if(FileExists(GetPluginUserDir()+"\\\\NotifyMe\\\\Stats.xml"))
+  //Zaznaczono na liscie jakis element
+  if(sListView->ItemIndex!=-1)
   {
-	DeleteFile(GetPluginUserDir()+"\\\\NotifyMe\\\\Stats.xml");
-    sListView->Clear();
+	//Wylaczenie przycisku usuwania
+	DeleteButton->Enabled = false;
+	//Usuwanie wybranego elementu z listy
+	sListView->Items->Item[sListView->ItemIndex]->Delete();
+	//Przepuszczanie funkcji usuwania dalej
+	Application->ProcessMessages();
+	//Usuwanie pliku XML
+	if(FileExists(GetPluginUserDir()+"\\\\NotifyMe\\\\Stats.xml"))
+	 DeleteFile(GetPluginUserDir()+"\\\\NotifyMe\\\\Stats.xml");
+	//Zapisywanie ponownie wszystkich danych do pliku XML
+	for(int Count=0;Count<sListView->Items->Count;Count++)
+	{
+	  //Pobieranie danych z listy i parsowanie
+	  UnicodeString Nick = sListView->Items->Item[Count]->Caption;
+	  UnicodeString JID = sListView->Items->Item[Count]->SubItems->Strings[0];
+	  UnicodeString Type = sListView->Items->Item[Count]->SubItems->Strings[1];
+	  if(Type=="Wersja oprogramowania") Type = "1";
+	  else Type = "2";
+	  UnicodeString Time = sListView->Items->Item[Count]->SubItems->Strings[2];
+	  UnicodeString Target = sListView->Items->Item[Count]->SubItems->Strings[3];
+	  //Zapisywanie danych
+	  SaveInfoToStatsFileEx(JID,Nick,Type,Target,Time);
+	}
+	//Wlaczenie przycisku usuwania
+	DeleteButton->Enabled = true;
   }
 }
 //---------------------------------------------------------------------------
@@ -225,6 +252,8 @@ void __fastcall TSettingsForm::SettingsTabSheetShow(TObject *Sender)
 {
   //Szerokosc formy
   Width = 332;
+  //Wysokosc formy
+  Height = 249;
 }
 //---------------------------------------------------------------------------
 
@@ -244,6 +273,8 @@ void __fastcall TSettingsForm::aShowExtInfoExecute(TObject *Sender)
   {
 	//Szerokosc formy
 	Width = 512;
+	//Wysokosc formy
+	Height = 317;
 	//Szerokosc kolumn
 	sListView->Column[1]->Width = 90;
 	sListView->Column[4]->Width = 90;
@@ -253,6 +284,8 @@ void __fastcall TSettingsForm::aShowExtInfoExecute(TObject *Sender)
   {
 	//Szerokosc formy
 	Width = 332;
+	//Wysokosc formy
+	Height = 249;
 	//Szerokosc kolumn
 	sListView->Column[1]->Width = 0;
 	sListView->Column[4]->Width = 0;
@@ -266,6 +299,16 @@ void __fastcall TSettingsForm::ExInfoCheckBoxClick(TObject *Sender)
   aShowExtInfo->Execute();
   //Zezwolenie na zapisanie ustawien
   aAllowSave->Execute();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TSettingsForm::aDeleteAllClick(TObject *Sender)
+{
+  if(FileExists(GetPluginUserDir()+"\\\\NotifyMe\\\\Stats.xml"))
+  {
+	DeleteFile(GetPluginUserDir()+"\\\\NotifyMe\\\\Stats.xml");
+	sListView->Clear();
+  }
 }
 //---------------------------------------------------------------------------
 
