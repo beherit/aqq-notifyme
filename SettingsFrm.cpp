@@ -26,21 +26,26 @@
 #include "SettingsFrm.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
+#pragma link "acPNG"
+#pragma link "acProgressBar"
 #pragma link "sBevel"
 #pragma link "sButton"
-#pragma link "sSkinManager"
-#pragma link "sSkinProvider"
-#pragma link "sPageControl"
-#pragma link "sLabel"
 #pragma link "sCheckBox"
 #pragma link "sEdit"
-#pragma link "sSpinEdit"
+#pragma link "sLabel"
 #pragma link "sListView"
+#pragma link "sPageControl"
+#pragma link "sSkinManager"
+#pragma link "sSkinProvider"
+#pragma link "sSpinEdit"
+#pragma link "sPanel"
 #pragma resource "*.dfm"
 TSettingsForm *SettingsForm;
 //---------------------------------------------------------------------------
 __declspec(dllimport)UnicodeString GetPluginUserDir();
 __declspec(dllimport)UnicodeString GetThemeSkinDir();
+__declspec(dllimport)UnicodeString GetThemeDir();
+__declspec(dllimport)UnicodeString GetDefaultThemeDir();
 __declspec(dllimport)bool ChkSkinEnabled();
 __declspec(dllimport)bool ChkThemeAnimateWindows();
 __declspec(dllimport)bool ChkThemeGlowing();
@@ -99,12 +104,10 @@ void __fastcall TSettingsForm::FormShow(TObject *Sender)
   aLoadSettings->Execute();
   //Wylaczenie przycisku "Zastosuj"
   SaveButton->Enabled = false;
-  //Domyslna aktywna karta
-  sPageControl->ActivePage = SettingsTabSheet;
-  //Domyslna szerokosc formy
-  Width = 332;
-  //Domyslna wysokosc formy
-  Height = 249;
+  //Pokazanie karty statystyk
+  if(pFastStats) sPageControl->ActivePage = StatsTabSheet;
+  //Pokazanie karty ustawien
+  else sPageControl->ActivePage = SettingsTabSheet;
 }
 //---------------------------------------------------------------------------
 
@@ -122,6 +125,8 @@ void __fastcall TSettingsForm::aLoadSettingsExecute(TObject *Sender)
   CloudTimeOutSpinEdit->Value = Ini->ReadInteger("Settings","CloudTimeOut",6);
   StatsCheckBox->Checked = Ini->ReadBool("Settings","Stats",false);
   StatsTabSheet->Enabled = StatsCheckBox->Checked;
+  FastStatsCheckBox->Enabled = StatsCheckBox->Checked;
+  FastStatsCheckBox->Checked = Ini->ReadBool("Settings","FastStats",false);
   ExInfoCheckBox->Checked = Ini->ReadBool("Settings","ExInfo",false);
   delete Ini;
 }
@@ -134,6 +139,7 @@ void __fastcall TSettingsForm::aSaveSettingsExecute(TObject *Sender)
   Ini->WriteBool("Settings","OnLast",OnLastCheckBox->Checked);
   Ini->WriteInteger("Settings","CloudTimeOut",CloudTimeOutSpinEdit->Value);
   Ini->WriteBool("Settings","Stats",StatsCheckBox->Checked);
+  Ini->WriteBool("Settings","FastStats",FastStatsCheckBox->Checked);
   Ini->WriteBool("Settings","ExInfo",ExInfoCheckBox->Checked);
   delete Ini;
 }
@@ -145,6 +151,8 @@ void __fastcall TSettingsForm::SaveButtonClick(TObject *Sender)
   aSaveSettings->Execute();
   //Odczyt ustawien w rdzeniu
   LoadSettings();
+  //Wylaczanie przycisku
+  SaveButton->Enabled = false;
 }
 //---------------------------------------------------------------------------
 
@@ -163,6 +171,7 @@ void __fastcall TSettingsForm::aAllowSaveExecute(TObject *Sender)
 {
   SaveButton->Enabled = true;
   StatsTabSheet->Enabled = StatsCheckBox->Checked;
+  FastStatsCheckBox->Enabled = StatsCheckBox->Checked;
 }
 //---------------------------------------------------------------------------
 
@@ -195,31 +204,27 @@ void __fastcall TSettingsForm::DeleteButtonClick(TObject *Sender)
   //Zaznaczono na liscie jakis element
   if(sListView->ItemIndex!=-1)
   {
-	//Wylaczenie przycisku usuwania
+	//Wylaczenie komponentow
+	SettingsTabSheet->Enabled = false;
+	ExInfoCheckBox->Enabled = false;
 	DeleteButton->Enabled = false;
+	ReloadButton->Enabled = false;
 	//Usuwanie wybranego elementu z listy
 	sListView->Items->Item[sListView->ItemIndex]->Delete();
-	//Przepuszczanie funkcji usuwania dalej
-	Application->ProcessMessages();
-	//Usuwanie pliku XML
-	if(FileExists(GetPluginUserDir()+"\\\\NotifyMe\\\\Stats.xml"))
-	 DeleteFile(GetPluginUserDir()+"\\\\NotifyMe\\\\Stats.xml");
-	//Zapisywanie ponownie wszystkich danych do pliku XML
-	for(int Count=0;Count<sListView->Items->Count;Count++)
-	{
-	  //Pobieranie danych z listy i parsowanie
-	  UnicodeString Nick = sListView->Items->Item[Count]->Caption;
-	  UnicodeString JID = sListView->Items->Item[Count]->SubItems->Strings[0];
-	  UnicodeString Type = sListView->Items->Item[Count]->SubItems->Strings[1];
-	  if(Type=="Wersja oprogramowania") Type = "1";
-	  else Type = "2";
-	  UnicodeString Time = sListView->Items->Item[Count]->SubItems->Strings[2];
-	  UnicodeString Target = sListView->Items->Item[Count]->SubItems->Strings[3];
-	  //Zapisywanie danych
-	  SaveInfoToStatsFileEx(JID,Nick,Type,Target,Time);
-	}
-	//Wlaczenie przycisku usuwania
-	DeleteButton->Enabled = true;
+	//Wczytanie grafiki postepu z aktywnej kompozycji
+	if(FileExists(GetThemeDir()+"////Graphics////ShortInfoURL.png"))
+	 ProgressImage->Picture->LoadFromFile(GetThemeDir()+"////Graphics////ShortInfoURL.png");
+	else if(FileExists(GetDefaultThemeDir()+"////Graphics////ShortInfoURL.png"))
+	 ProgressImage->Picture->LoadFromFile(GetDefaultThemeDir()+"////Graphics////ShortInfoURL.png");
+	//Ustawienie paska postepu
+	RebuildXMLProgressBar->Position = 0;
+	RebuildXMLProgressBar->Max = sListView->Items->Count;
+	if(ExInfoCheckBox->Checked)	ProgressPanel->Margins->Top = 52;
+	else ProgressPanel->Margins->Top = 12;
+	//Ukrycie listy
+	sListView->Visible = false;
+	//Wlaczenie watku przebudowy pliku XML
+	RebuildXMLThreadComponent->Start();
   }
 }
 //---------------------------------------------------------------------------
@@ -253,7 +258,7 @@ void __fastcall TSettingsForm::SettingsTabSheetShow(TObject *Sender)
   //Szerokosc formy
   Width = 332;
   //Wysokosc formy
-  Height = 249;
+  Height = 267;
 }
 //---------------------------------------------------------------------------
 
@@ -271,10 +276,12 @@ void __fastcall TSettingsForm::aShowExtInfoExecute(TObject *Sender)
   //Szczegolowe informacje
   if(ExInfoCheckBox->Checked)
   {
+	//Margines panelu postepu
+	ProgressPanel->Margins->Top = 52;
 	//Szerokosc formy
 	Width = 512;
 	//Wysokosc formy
-	Height = 317;
+	Height = 352;
 	//Szerokosc kolumn
 	sListView->Column[1]->Width = 90;
 	sListView->Column[4]->Width = 90;
@@ -282,10 +289,12 @@ void __fastcall TSettingsForm::aShowExtInfoExecute(TObject *Sender)
   //Brak szczegolowych informacji
   else
   {
+	//Margines panelu postepu
+	ProgressPanel->Margins->Top = 12;
 	//Szerokosc formy
 	Width = 332;
 	//Wysokosc formy
-	Height = 249;
+	Height = 267;
 	//Szerokosc kolumn
 	sListView->Column[1]->Width = 0;
 	sListView->Column[4]->Width = 0;
@@ -309,6 +318,39 @@ void __fastcall TSettingsForm::aDeleteAllClick(TObject *Sender)
 	DeleteFile(GetPluginUserDir()+"\\\\NotifyMe\\\\Stats.xml");
 	sListView->Clear();
   }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TSettingsForm::RebuildXMLThreadComponentRun(TIdThreadComponent *Sender)
+{
+  //Usuwanie pliku XML
+  if(FileExists(GetPluginUserDir()+"\\\\NotifyMe\\\\Stats.xml"))
+   DeleteFile(GetPluginUserDir()+"\\\\NotifyMe\\\\Stats.xml");
+  //Zapisywanie ponownie wszystkich danych do pliku XML
+  for(int Count=0;Count<sListView->Items->Count;Count++)
+  {
+	//Pobieranie danych z listy i parsowanie
+	UnicodeString Nick = sListView->Items->Item[Count]->Caption;
+	UnicodeString JID = sListView->Items->Item[Count]->SubItems->Strings[0];
+	UnicodeString Type = sListView->Items->Item[Count]->SubItems->Strings[1];
+	if(Type=="Wersja oprogramowania") Type = "1";
+	else Type = "2";
+	UnicodeString Time = sListView->Items->Item[Count]->SubItems->Strings[2];
+	UnicodeString Target = sListView->Items->Item[Count]->SubItems->Strings[3];
+	//Zapisywanie danych
+	SaveInfoToStatsFileEx(JID,Nick,Type,Target,Time);
+	//Dodanie pozycji do paska postepu
+	RebuildXMLProgressBar->Position++;
+  }
+  //Pokazanie listy
+  sListView->Visible = true;
+  //Wlaczenie komponentow
+  SettingsTabSheet->Enabled = true;
+  ExInfoCheckBox->Enabled = true;
+  DeleteButton->Enabled = true;
+  ReloadButton->Enabled = true;
+  //Zatrzymanie watku
+  RebuildXMLThreadComponent->Terminate();
 }
 //---------------------------------------------------------------------------
 

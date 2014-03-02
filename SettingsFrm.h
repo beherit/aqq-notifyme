@@ -24,26 +24,29 @@
 #define SettingsFrmH
 #define WM_ALPHAWINDOWS (WM_USER + 666)
 //---------------------------------------------------------------------------
-#include <System.Classes.hpp>
-#include <Vcl.Controls.hpp>
-#include <Vcl.StdCtrls.hpp>
-#include <Vcl.Forms.hpp>
+#include "acPNG.hpp"
+#include "acProgressBar.hpp"
 #include "sBevel.hpp"
 #include "sButton.hpp"
+#include "sCheckBox.hpp"
+#include "sEdit.hpp"
+#include "sLabel.hpp"
+#include "sListView.hpp"
+#include "sPageControl.hpp"
 #include "sSkinManager.hpp"
 #include "sSkinProvider.hpp"
-#include <System.Actions.hpp>
-#include <Vcl.ActnList.hpp>
-#include <Vcl.ExtCtrls.hpp>
-#include "sPageControl.hpp"
-#include <Vcl.ComCtrls.hpp>
-#include "sLabel.hpp"
-#include "sCheckBox.hpp"
-#include <Vcl.Samples.Spin.hpp>
-#include "sEdit.hpp"
 #include "sSpinEdit.hpp"
-#include "sListView.hpp"
+#include <IdBaseComponent.hpp>
+#include <IdThreadComponent.hpp>
+#include <System.Actions.hpp>
+#include <System.Classes.hpp>
+#include <Vcl.ActnList.hpp>
+#include <Vcl.ComCtrls.hpp>
+#include <Vcl.Controls.hpp>
+#include <Vcl.ExtCtrls.hpp>
 #include <Vcl.Menus.hpp>
+#include <Vcl.StdCtrls.hpp>
+#include "sPanel.hpp"
 //---------------------------------------------------------------------------
 class TSettingsForm : public TForm
 {
@@ -75,6 +78,12 @@ __published:	// IDE-managed Components
 	TAction *aShowExtInfo;
 	TPopupMenu *PopupMenu;
 	TMenuItem *aDeleteAll;
+	TsCheckBox *FastStatsCheckBox;
+	TIdThreadComponent *RebuildXMLThreadComponent;
+	TsProgressBar *RebuildXMLProgressBar;
+	TsLabel *RebuildXMLLabel;
+	TImage *ProgressImage;
+	TsPanel *ProgressPanel;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormShow(TObject *Sender);
 	void __fastcall aExitExecute(TObject *Sender);
@@ -93,9 +102,13 @@ __published:	// IDE-managed Components
 	void __fastcall aShowExtInfoExecute(TObject *Sender);
 	void __fastcall ExInfoCheckBoxClick(TObject *Sender);
 	void __fastcall aDeleteAllClick(TObject *Sender);
+	void __fastcall RebuildXMLThreadComponentRun(TIdThreadComponent *Sender);
+
+
 private:	// User declarations
 public:		// User declarations
 	__fastcall TSettingsForm(TComponent* Owner);
+	bool pFastStats;
 	void __fastcall WMTransparency(TMessage &Message);
 	BEGIN_MESSAGE_MAP
 	MESSAGE_HANDLER(WM_ALPHAWINDOWS,TMessage,WMTransparency);
