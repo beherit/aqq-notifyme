@@ -1,3 +1,9 @@
+1.1.3.0
+-----
+* Możliwość włączenia przycisku szybkiego dostępu do statystyk.
+* Poprawki w przebudowie pliku XML ze statystykami.
+* Inne małe poprawki na formie ustawień.
+
 1.1.2.0
 -----
 * Poprawki w pobieraniu pseudonimów kontaktów.

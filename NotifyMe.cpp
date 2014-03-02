@@ -50,17 +50,21 @@ TMemIniFile* ContactsNickList = new TMemIniFile(ChangeFileExt(Application->ExeNa
 DWORD ReplyListID = 0;
 //Sciezka-do-pliku-ze-statystykami-------------------------------------------
 UnicodeString StatsFilePath;
+//IKONY-W-INTERFEJSIE--------------------------------------------------------
+int FASTACCESS;
 //SETTINGS-------------------------------------------------------------------
 bool OnVersionChk;
 bool OnLastChk;
 int CloudTimeOut;
 bool StatsChk;
+bool FastStatsChk;
 //FORWARD-AQQ-HOOKS----------------------------------------------------------
 INT_PTR __stdcall OnColorChange(WPARAM wParam, LPARAM lParam);
 INT_PTR __stdcall OnContactsUpdate(WPARAM wParam, LPARAM lParam);
 INT_PTR __stdcall OnReplyList(WPARAM wParam, LPARAM lParam);
 INT_PTR __stdcall OnThemeChanged(WPARAM wParam, LPARAM lParam);
 INT_PTR __stdcall OnXMLIDDebug(WPARAM wParam, LPARAM lParam);
+INT_PTR __stdcall ServiceNotifyMeFastStatsItem(WPARAM wParam, LPARAM lParam);
 //FORWARD-TIMER--------------------------------------------------------------
 LRESULT CALLBACK TimerFrmProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 //---------------------------------------------------------------------------
@@ -69,6 +73,18 @@ LRESULT CALLBACK TimerFrmProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 UnicodeString GetPluginUserDir()
 {
   return StringReplace((wchar_t*)PluginLink.CallService(AQQ_FUNCTION_GETPLUGINUSERDIR,0,0), "\\", "\\\\", TReplaceFlags() << rfReplaceAll);
+}
+//---------------------------------------------------------------------------
+
+//Pobieranie sciezki kompozycji
+UnicodeString GetThemeDir()
+{
+  return StringReplace((wchar_t*)PluginLink.CallService(AQQ_FUNCTION_GETTHEMEDIR,0,0), "\\", "\\\\", TReplaceFlags() << rfReplaceAll);
+}
+//---------------------------------------------------------------------------
+UnicodeString GetDefaultThemeDir()
+{
+  return StringReplace((wchar_t*)PluginLink.CallService(AQQ_FUNCTION_GETAPPPATH,0,0), "\\", "\\\\", TReplaceFlags() << rfReplaceAll) + "\\\\System\\\\Shared\\\\Themes\\\\Standard";
 }
 //---------------------------------------------------------------------------
 
@@ -213,6 +229,22 @@ void SaveInfoToStatsFileEx(UnicodeString JID, UnicodeString Nick, UnicodeString 
   ChildNode->Attributes["time"] = Time;
   //Zapisywanie zmian w pliku
   XMLDoc->SaveToFile(StatsFilePath);
+}
+//---------------------------------------------------------------------------
+
+//Otwieranie okna ustawien wtyczki
+void OpenPluginSettings(bool FastStats)
+{
+  //Przypisanie uchwytu do formy ustawien
+  if(!hSettingsForm)
+  {
+	Application->Handle = (HWND)SettingsForm;
+	hSettingsForm = new TSettingsForm(Application);
+  }
+  //Przekazanie zmiennej typu otwarcia okna
+  hSettingsForm->pFastStats = FastStats;
+  //Pokaznie okna ustawien
+  hSettingsForm->Show();
 }
 //---------------------------------------------------------------------------
 
@@ -448,6 +480,42 @@ INT_PTR __stdcall OnXMLIDDebug(WPARAM wParam, LPARAM lParam)
 }
 //---------------------------------------------------------------------------
 
+//Serwis szybkiego dostepu do ustawien wtyczki (statystyki)
+INT_PTR __stdcall ServiceNotifyMeFastStatsItem(WPARAM wParam, LPARAM lParam)
+{
+  //Otwieranie okna ustawien wtyczki (statystyki)
+  OpenPluginSettings(true);
+
+  return 0;
+}
+//---------------------------------------------------------------------------
+
+//Usuwanie elementu szybkiego dostepu do ustawien wtyczki (statystyki)
+void DestroyNotifyMeFastStats()
+{
+  TPluginAction BuildNotifyMeFastStatsItem;
+  ZeroMemory(&BuildNotifyMeFastStatsItem,sizeof(TPluginAction));
+  BuildNotifyMeFastStatsItem.cbSize = sizeof(TPluginAction);
+  BuildNotifyMeFastStatsItem.pszName = L"NotifyMeFastStatsItemButton";
+  PluginLink.CallService(AQQ_CONTROLS_DESTROYPOPUPMENUITEM,0,(LPARAM)(&BuildNotifyMeFastStatsItem));
+}
+//---------------------------------------------------------------------------
+
+//Tworzenie elementu szybkiego dostepu do ustawien wtyczki (statystyki)
+void BuildNotifyMeFastStats()
+{
+  TPluginAction BuildNotifyMeFastStatsItem;
+  ZeroMemory(&BuildNotifyMeFastStatsItem,sizeof(TPluginAction));
+  BuildNotifyMeFastStatsItem.cbSize = sizeof(TPluginAction);
+  BuildNotifyMeFastStatsItem.pszName = L"NotifyMeFastStatsItemButton";
+  BuildNotifyMeFastStatsItem.pszCaption = L"NotifyMe (statystyki)";
+  BuildNotifyMeFastStatsItem.IconIndex = FASTACCESS;
+  BuildNotifyMeFastStatsItem.pszService = L"sNotifyMeFastStatsItem";
+  BuildNotifyMeFastStatsItem.pszPopupName = L"popPlugins";
+  PluginLink.CallService(AQQ_CONTROLS_CREATEPOPUPMENUITEM,0,(LPARAM)(&BuildNotifyMeFastStatsItem));
+}
+//---------------------------------------------------------------------------
+
 //Odczyt ustawien
 void LoadSettings()
 {
@@ -456,6 +524,9 @@ void LoadSettings()
   OnLastChk = Ini->ReadBool("Settings","OnLast",true);
   CloudTimeOut = Ini->ReadInteger("Settings","CloudTimeOut",6);
   StatsChk = Ini->ReadBool("Settings","Stats",false);
+  FastStatsChk = Ini->ReadBool("Settings","FastStats",false);
+  DestroyNotifyMeFastStats();
+  if((StatsChk)&&(FastStatsChk)) BuildNotifyMeFastStats();
   delete Ini;
 }
 //---------------------------------------------------------------------------
@@ -524,6 +595,16 @@ extern "C" INT_PTR __declspec(dllexport) __stdcall Load(PPluginLink Link)
    ExtractRes((PluginUserDir + "\\\\Shared\\\\NotifyMe.dll.png").w_str(),L"SHARED",L"DATA");
   else if(MD5File(PluginUserDir + "\\\\Shared\\\\NotifyMe.dll.png")!="E9C441E4118D0DDAA67361FE0423B39A")
    ExtractRes((PluginUserDir + "\\\\Shared\\\\NotifyMe.dll.png").w_str(),L"SHARED",L"DATA");
+  //Wypakiwanie ikonki FastAccess.png
+  //C65DEEB1DB0588F07CBE175D9172FAB6
+  if(!FileExists(PluginUserDir + "\\\\NotifyMe\\\\FastAccess.png"))
+   ExtractRes((PluginUserDir + "\\\\NotifyMe\\\\FastAccess.png").w_str(),L"FASTACCESS",L"DATA");
+  else if(MD5File(PluginUserDir + "\\\\NotifyMe\\\\FastAccess.png")!="C65DEEB1DB0588F07CBE175D9172FAB6")
+   ExtractRes((PluginUserDir + "\\\\NotifyMe\\\\FastAccess.png").w_str(),L"FASTACCESS",L"DATA");
+  //Przypisanie ikonki FASTACCESS do interfejsu AQQ
+  FASTACCESS = PluginLink.CallService(AQQ_ICONS_LOADPNGICON,0, (LPARAM)(PluginUserDir + "\\\\NotifyMe\\\\FastAccess.png").w_str());
+  //Tworzenie serwisu szybkiego dostep do ustawien wtyczki (statystyki)
+  PluginLink.CreateServiceFunction(L"sNotifyMeFastStatsItem",ServiceNotifyMeFastStatsItem);
   //Odczyt ustawien
   LoadSettings();
   //Hook na zmiane kolorystyki AlphaControls
@@ -572,6 +653,11 @@ extern "C" INT_PTR __declspec(dllexport) __stdcall Unload()
   DestroyWindow(hTimerFrm);
   //Wyrejestowanie klasy okna timera
   UnregisterClass(L"TNotifyMeTimer",HInstance);
+  //Szybki dostepu do ustawien wtyczki (statystyki)
+  //Usuwanie interwejsu
+  DestroyNotifyMeFastStats();
+  //Usuwanie serwisu
+  PluginLink.DestroyServiceFunction(ServiceNotifyMeFastStatsItem);
   //Wyladowanie wszystkich hookow
   PluginLink.UnhookEvent(OnColorChange);
   PluginLink.UnhookEvent(OnContactsUpdate);
@@ -586,14 +672,8 @@ extern "C" INT_PTR __declspec(dllexport) __stdcall Unload()
 //Ustawienia wtyczki
 extern "C" INT_PTR __declspec(dllexport)__stdcall Settings()
 {
-  //Przypisanie uchwytu do formy ustawien
-  if(!hSettingsForm)
-  {
-	Application->Handle = (HWND)SettingsForm;
-	hSettingsForm = new TSettingsForm(Application);
-  }
-  //Pokaznie okna ustawien
-  hSettingsForm->Show();
+  //Otwieranie okna ustawien wtyczki
+  OpenPluginSettings(false);
 
   return 0;
 }
@@ -604,7 +684,7 @@ extern "C" PPluginInfo __declspec(dllexport) __stdcall AQQPluginInfo(DWORD AQQVe
 {
   PluginInfo.cbSize = sizeof(TPluginInfo);
   PluginInfo.ShortName = L"NotifyMe";
-  PluginInfo.Version = PLUGIN_MAKE_VERSION(1,1,2,0);
+  PluginInfo.Version = PLUGIN_MAKE_VERSION(1,1,3,0);
   PluginInfo.Description = L"Powiadamia o sprawdzaniu naszej wersji oprogramowania oraz ostatniej aktywnoœci przez innego u¿ytkownika.";
   PluginInfo.Author = L"Krzysztof Grochocki";
   PluginInfo.AuthorMail = L"kontakt@beherit.pl";
