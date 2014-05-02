@@ -103,8 +103,6 @@ __published:	// IDE-managed Components
 	void __fastcall ExInfoCheckBoxClick(TObject *Sender);
 	void __fastcall aDeleteAllClick(TObject *Sender);
 	void __fastcall RebuildXMLThreadComponentRun(TIdThreadComponent *Sender);
-
-
 private:	// User declarations
 public:		// User declarations
 	__fastcall TSettingsForm(TComponent* Owner);
