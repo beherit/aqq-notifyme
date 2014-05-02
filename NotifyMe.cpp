@@ -164,6 +164,13 @@ UnicodeString GetAccountJID(int UserIdx)
   return (wchar_t*)PluginStateChange.JID;
 }
 //---------------------------------------------------------------------------
+UnicodeString GetAccountJIDW(int UserIdx)
+{
+  TPluginStateChange PluginStateChange;
+  PluginLink.CallService(AQQ_FUNCTION_GETNETWORKSTATE,(WPARAM)&PluginStateChange,UserIdx);
+  return (wchar_t*)PluginStateChange.Server;
+}
+//---------------------------------------------------------------------------
 
 //Pokazanie chmurki informacyjnej
 void ShowNotification(UnicodeString Text)
@@ -423,8 +430,8 @@ INT_PTR __stdcall OnXMLIDDebug(WPARAM wParam, LPARAM lParam)
 			UnicodeString From = (wchar_t*)XMLChunk.From;
 			if(From.Pos("/")) From = From.Delete(From.Pos("/"),From.Length());
 			int UserIdx = XMLChunk.UserIdx;
-			//Anty self-check
-			if(From!=GetAccountJID(XMLChunk.UserIdx))
+			//Anty self-check & server-check
+			if((From!=GetAccountJID(XMLChunk.UserIdx))&&(From!=GetAccountJIDW(XMLChunk.UserIdx)))
 			{
               //Zabezpieczenie przed spamem chmurek
 			  if(!AntySpamList->ValueExists("Version",From))
@@ -451,8 +458,8 @@ INT_PTR __stdcall OnXMLIDDebug(WPARAM wParam, LPARAM lParam)
 			UnicodeString From = (wchar_t*)XMLChunk.From;
 			if(From.Pos("/")) From = From.Delete(From.Pos("/"),From.Length());
 			int UserIdx = XMLChunk.UserIdx;
-			//Anty self-check
-			if(From!=GetAccountJID(XMLChunk.UserIdx))
+			//Anty self-check & server-check
+			if((From!=GetAccountJID(XMLChunk.UserIdx))&&(From!=GetAccountJIDW(XMLChunk.UserIdx)))
 			{
 			  //Zabezpieczenie przed spamem chmurek
 			  if(!AntySpamList->ValueExists("Last",From))
@@ -684,7 +691,7 @@ extern "C" PPluginInfo __declspec(dllexport) __stdcall AQQPluginInfo(DWORD AQQVe
 {
   PluginInfo.cbSize = sizeof(TPluginInfo);
   PluginInfo.ShortName = L"NotifyMe";
-  PluginInfo.Version = PLUGIN_MAKE_VERSION(1,1,3,0);
+  PluginInfo.Version = PLUGIN_MAKE_VERSION(1,1,4,0);
   PluginInfo.Description = L"Powiadamia o sprawdzaniu naszej wersji oprogramowania oraz ostatniej aktywnoœci przez innego u¿ytkownika.";
   PluginInfo.Author = L"Krzysztof Grochocki";
   PluginInfo.AuthorMail = L"kontakt@beherit.pl";

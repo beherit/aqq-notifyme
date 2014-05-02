@@ -1,3 +1,7 @@
+1.1.4.0
+-----
+* Ignorowanie pakietów wysyłanych przez sam serwer.
+
 1.1.3.0
 -----
 * Możliwość włączenia przycisku szybkiego dostępu do statystyk.
