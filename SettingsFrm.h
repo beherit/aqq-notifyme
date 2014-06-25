@@ -33,6 +33,7 @@
 #include "sLabel.hpp"
 #include "sListView.hpp"
 #include "sPageControl.hpp"
+#include "sPanel.hpp"
 #include "sSkinManager.hpp"
 #include "sSkinProvider.hpp"
 #include "sSpinEdit.hpp"
@@ -46,7 +47,6 @@
 #include <Vcl.ExtCtrls.hpp>
 #include <Vcl.Menus.hpp>
 #include <Vcl.StdCtrls.hpp>
-#include "sPanel.hpp"
 //---------------------------------------------------------------------------
 class TSettingsForm : public TForm
 {
