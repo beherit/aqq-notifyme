@@ -221,6 +221,10 @@ object SettingsForm: TSettingsForm
       OnShow = SettingsTabSheetShow
       SkinData.CustomColor = False
       SkinData.CustomFont = False
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object NotificationLabel: TsLabel
         Left = 12
         Top = 12
@@ -643,6 +647,7 @@ object SettingsForm: TSettingsForm
     MenuSupport.ExtraLineFont.Height = -11
     MenuSupport.ExtraLineFont.Name = 'Tahoma'
     MenuSupport.ExtraLineFont.Style = []
+    Options.OptimizingPriority = opMemory
     SkinDirectory = 'D:\C++ Projects\_ExtSkins'
     SkinName = 'Skin'
     SkinInfo = 'N/A'

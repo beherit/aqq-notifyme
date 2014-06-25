@@ -35,10 +35,10 @@
 #pragma link "sLabel"
 #pragma link "sListView"
 #pragma link "sPageControl"
+#pragma link "sPanel"
 #pragma link "sSkinManager"
 #pragma link "sSkinProvider"
 #pragma link "sSpinEdit"
-#pragma link "sPanel"
 #pragma resource "*.dfm"
 TSettingsForm *SettingsForm;
 //---------------------------------------------------------------------------
