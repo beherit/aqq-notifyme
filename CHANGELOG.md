@@ -1,3 +1,9 @@
+1.1.5.0
+-----
+* Lepsza prezentacja nazwy kontaktu w przypadku jego braku na liście.
+* Poprawki w enumeracji listy kontaktów.
+* Aktualizacja komponentów AlphaControls do nowszej wersji (9.05).
+
 1.1.4.0
 -----
 * Ignorowanie pakietów wysyłanych przez sam serwer.
