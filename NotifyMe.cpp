@@ -47,7 +47,7 @@ TMemIniFile* AntySpamList = new TMemIniFile(ChangeFileExt(Application->ExeName, 
 //Lista-JID-wraz-z-nickami---------------------------------------------------
 TMemIniFile* ContactsNickList = new TMemIniFile(ChangeFileExt(Application->ExeName, ".INI"));
 //ID-wywolania-enumeracji-listy-kontaktow------------------------------------
-DWORD ReplyListID = 0;
+int ReplyListID = 0;
 //Sciezka-do-pliku-ze-statystykami-------------------------------------------
 UnicodeString StatsFilePath;
 //IKONY-W-INTERFEJSIE--------------------------------------------------------
@@ -61,6 +61,7 @@ bool FastStatsChk;
 //FORWARD-AQQ-HOOKS----------------------------------------------------------
 INT_PTR __stdcall OnColorChange(WPARAM wParam, LPARAM lParam);
 INT_PTR __stdcall OnContactsUpdate(WPARAM wParam, LPARAM lParam);
+INT_PTR __stdcall OnListReady(WPARAM wParam, LPARAM lParam);
 INT_PTR __stdcall OnReplyList(WPARAM wParam, LPARAM lParam);
 INT_PTR __stdcall OnThemeChanged(WPARAM wParam, LPARAM lParam);
 INT_PTR __stdcall OnXMLIDDebug(WPARAM wParam, LPARAM lParam);
@@ -331,11 +332,23 @@ INT_PTR __stdcall OnContactsUpdate(WPARAM wParam, LPARAM lParam)
 }
 //---------------------------------------------------------------------------
 
+//Hook na zakonczenie ladowania listy kontaktow przy starcie AQQ
+INT_PTR __stdcall OnListReady(WPARAM wParam, LPARAM lParam)
+{
+  //Pobranie ID dla enumeracji kontaktow
+  ReplyListID = GetTickCount();
+  //Wywolanie enumeracji kontaktow
+  PluginLink.CallService(AQQ_CONTACTS_REQUESTLIST,(WPARAM)ReplyListID,0);
+
+  return 0;
+}
+//---------------------------------------------------------------------------
+
 //Hook na enumeracje listy kontatkow
 INT_PTR __stdcall OnReplyList(WPARAM wParam, LPARAM lParam)
 {
   //Sprawdzanie ID wywolania enumeracji
-  if(wParam==ReplyListID)
+  if((int)wParam==ReplyListID)
   {
 	//Pobieranie danych nt. kontaktu
 	TPluginContact ReplyListContact = *(PPluginContact)lParam;
@@ -618,6 +631,8 @@ extern "C" INT_PTR __declspec(dllexport) __stdcall Load(PPluginLink Link)
   PluginLink.HookEvent(AQQ_SYSTEM_COLORCHANGE,OnColorChange);
   //Hook na zmianê stanu kontaktu
   PluginLink.HookEvent(AQQ_CONTACTS_UPDATE,OnContactsUpdate);
+  //Hook na zakonczenie ladowania listy kontaktow przy starcie AQQ
+  PluginLink.HookEvent(AQQ_CONTACTS_LISTREADY,OnListReady);
   //Hook na enumeracje listy kontatkow
   PluginLink.HookEvent(AQQ_CONTACTS_REPLYLIST,OnReplyList);
   //Hook na zmiane kompozycji
@@ -668,6 +683,7 @@ extern "C" INT_PTR __declspec(dllexport) __stdcall Unload()
   //Wyladowanie wszystkich hookow
   PluginLink.UnhookEvent(OnColorChange);
   PluginLink.UnhookEvent(OnContactsUpdate);
+  PluginLink.UnhookEvent(OnListReady);
   PluginLink.UnhookEvent(OnReplyList);
   PluginLink.UnhookEvent(OnThemeChanged);
   PluginLink.UnhookEvent(OnXMLIDDebug);
