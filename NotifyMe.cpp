@@ -151,8 +151,15 @@ int GetSaturation()
 //Pobieranie pseudonimu kontaktu podajac jego JID
 UnicodeString GetContactNick(UnicodeString JID)
 {
+  //Odczyt pseudonimu z pliku INI
   UnicodeString Nick = ContactsNickList->ReadString("Nick",JID,"");
-  if(Nick.IsEmpty()) return JID;
+  //Pseudonim nie zostal pobrany
+  if(Nick.IsEmpty())
+  {
+	//Usuwanie indeksu konta z JID
+	if(JID.Pos(":")) JID.Delete(JID.Pos(":"),JID.Length());
+	return JID;
+  }
   return Nick;
 }
 //---------------------------------------------------------------------------
