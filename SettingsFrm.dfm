@@ -221,10 +221,6 @@ object SettingsForm: TSettingsForm
       OnShow = SettingsTabSheetShow
       SkinData.CustomColor = False
       SkinData.CustomFont = False
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object NotificationLabel: TsLabel
         Left = 12
         Top = 12
@@ -673,6 +669,8 @@ object SettingsForm: TSettingsForm
     ThirdParty.ThirdUpDown = ' '
     ThirdParty.ThirdScrollBar = ' '
     ThirdParty.ThirdStaticText = ' '
+    ThirdParty.ThirdNativePaint = ' '
+    OnSysDlgInit = sSkinManagerSysDlgInit
     Left = 32
     Top = 208
   end

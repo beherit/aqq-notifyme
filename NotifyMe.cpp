@@ -714,7 +714,7 @@ extern "C" PPluginInfo __declspec(dllexport) __stdcall AQQPluginInfo(DWORD AQQVe
 {
   PluginInfo.cbSize = sizeof(TPluginInfo);
   PluginInfo.ShortName = L"NotifyMe";
-  PluginInfo.Version = PLUGIN_MAKE_VERSION(1,1,5,0);
+  PluginInfo.Version = PLUGIN_MAKE_VERSION(1,1,6,0);
   PluginInfo.Description = L"Powiadamia o sprawdzaniu naszej wersji oprogramowania oraz ostatniej aktywnoœci przez innego u¿ytkownika.";
   PluginInfo.Author = L"Krzysztof Grochocki";
   PluginInfo.AuthorMail = L"kontakt@beherit.pl";
