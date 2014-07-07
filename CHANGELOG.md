@@ -1,3 +1,8 @@
+1.1.6.0
+-----
+* Nieskórkowanie systemowych okien dialogowych niepochodzących z wtyczki.
+* Aktualizacja komponentów AlphaControls do nowszej wersji (9.10).
+
 1.1.5.0
 -----
 * Lepsza prezentacja nazwy kontaktu w przypadku jego braku na liście.

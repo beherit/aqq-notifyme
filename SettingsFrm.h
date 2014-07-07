@@ -103,6 +103,7 @@ __published:	// IDE-managed Components
 	void __fastcall ExInfoCheckBoxClick(TObject *Sender);
 	void __fastcall aDeleteAllClick(TObject *Sender);
 	void __fastcall RebuildXMLThreadComponentRun(TIdThreadComponent *Sender);
+	void __fastcall sSkinManagerSysDlgInit(TacSysDlgData DlgData, bool &AllowSkinning);
 private:	// User declarations
 public:		// User declarations
 	__fastcall TSettingsForm(TComponent* Owner);

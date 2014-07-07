@@ -354,3 +354,9 @@ void __fastcall TSettingsForm::RebuildXMLThreadComponentRun(TIdThreadComponent *
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TSettingsForm::sSkinManagerSysDlgInit(TacSysDlgData DlgData, bool &AllowSkinning)
+{
+  AllowSkinning = false;
+}
+//---------------------------------------------------------------------------
+

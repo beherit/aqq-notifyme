@@ -78,22 +78,20 @@
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <IncludePath>$(BDSINCLUDE)\windows\vcl;$(IncludePath)</IncludePath>
         <PackageImports>acnt_R;adortl;bcbie;bcbsmp;bdertl;bindcomp;bindcompdbx;bindcompfmx;bindcompvcl;bindengine;CustomIPTransport;DataSnapFireDAC;dbexpress;dbrtl;dbxcds;DbxClientDriver;DbxCommonDriver;DBXInterBaseDriver;DBXMySQLDriver;DBXSqliteDriver;dsnap;dsnapcon;FireDAC;FireDACADSDriver;FireDACASADriver;FireDACCommon;FireDACCommonDriver;FireDACDb2Driver;FireDACDBXDriver;FireDACDSDriver;FireDACIBDriver;FireDACInfxDriver;FireDACMSAccDriver;FireDACMSSQLDriver;FireDACMySQLDriver;FireDACODBCDriver;FireDACOracleDriver;FireDACPgDriver;FireDACSqliteDriver;fmx;fmxase;fmxdae;fmxFireDAC;fmxobj;FMXTee;FmxTeeUI;IndyCore;IndyIPClient;IndyIPCommon;IndyIPServer;IndyProtocols;IndySystem;inet;inetdb;inetdbbde;inetdbxpress;MetropolisUILiveTile;RESTBackendComponents;RESTComponents;rtl;soapmidas;soaprtl;soapserver;svn;Tee;TeeDB;TeeUI;tethering;vcl;vclactnband;vcldb;vcldbx;vcldsnap;vclFireDAC;vclie;vclimg;VCLRESTComponents;vclribbon;VclSmp;vcltouch;vclx;xmlrtl;$(PackageImports)</PackageImports>
-        <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_MinorVer>1</VerInfo_MinorVer>
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
-        <VerInfo_Keys>FileVersion=1.1.5.0;ProductVersion=1.0.0.0;LegalTrademarks=Krzysztof Grochocki;LegalCopyright=Krzysztof Grochocki;CompanyName=Beherit Development;ProductName=NotifyMe</VerInfo_Keys>
-        <VerInfo_Release>5</VerInfo_Release>
+        <VerInfo_Keys>FileVersion=1.1.6.0;ProductVersion=1.0.0.0;LegalTrademarks=Krzysztof Grochocki;LegalCopyright=Krzysztof Grochocki;CompanyName=Beherit Development;ProductName=NotifyMe</VerInfo_Keys>
+        <VerInfo_Release>6</VerInfo_Release>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
         <IncludePath>$(BDSINCLUDE)\windows\vcl;$(IncludePath)</IncludePath>
         <PackageImports>acnt_R;adortl;bindcomp;bindcompdbx;bindcompfmx;bindcompvcl;bindengine;CustomIPTransport;DataSnapFireDAC;dbexpress;dbrtl;dbxcds;DbxClientDriver;DbxCommonDriver;DBXInterBaseDriver;DBXMySQLDriver;DBXSqliteDriver;dsnap;dsnapcon;FireDAC;FireDACADSDriver;FireDACASADriver;FireDACCommon;FireDACCommonDriver;FireDACDb2Driver;FireDACDBXDriver;FireDACDSDriver;FireDACIBDriver;FireDACInfxDriver;FireDACMSAccDriver;FireDACMSSQLDriver;FireDACMySQLDriver;FireDACODBCDriver;FireDACOracleDriver;FireDACPgDriver;FireDACSqliteDriver;fmx;fmxase;fmxdae;fmxFireDAC;fmxobj;FMXTee;FmxTeeUI;IndyCore;IndyIPClient;IndyIPCommon;IndyIPServer;IndyProtocols;IndySystem;inet;inetdb;inetdbxpress;MetropolisUILiveTile;RESTBackendComponents;RESTComponents;rtl;soapmidas;soaprtl;soapserver;Tee;TeeDB;TeeUI;tethering;vcl;vclactnband;vcldb;vcldsnap;vclFireDAC;vclie;vclimg;VCLRESTComponents;vclribbon;VclSmp;vcltouch;vclx;xmlrtl;$(PackageImports)</PackageImports>
-        <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>FileVersion=1.1.5.0;ProductVersion=1.0.0.0;LegalTrademarks=Krzysztof Grochocki;LegalCopyright=Krzysztof Grochocki;CompanyName=Beherit Development;ProductName=NotifyMe</VerInfo_Keys>
+        <VerInfo_Keys>FileVersion=1.1.6.0;ProductVersion=1.0.0.0;LegalTrademarks=Krzysztof Grochocki;LegalCopyright=Krzysztof Grochocki;CompanyName=Beherit Development;ProductName=NotifyMe</VerInfo_Keys>
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
         <BCC_PCHName_Clang>NotifyMe.h</BCC_PCHName_Clang>
-        <VerInfo_Release>5</VerInfo_Release>
+        <VerInfo_Release>6</VerInfo_Release>
         <VerInfo_MinorVer>1</VerInfo_MinorVer>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
@@ -119,15 +117,17 @@
         <ILINK_TranslatedLibraryPath>$(BDSLIB)\$(PLATFORM)\debug\$(LANGDIR);$(ILINK_TranslatedLibraryPath)</ILINK_TranslatedLibraryPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <LinkPackageImports>rtl.bpi;vcl.bpi;IndyProtocols.bpi;IndyCore.bpi;IndySystem.bpi;xmlrtl.bpi</LinkPackageImports>
         <ILINK_LibraryPath>$(BDS)\lib\win32\release\;$(ILINK_LibraryPath)</ILINK_LibraryPath>
-        <VerInfo_Release>5</VerInfo_Release>
+        <VerInfo_Release>6</VerInfo_Release>
         <VerInfo_MinorVer>1</VerInfo_MinorVer>
-        <VerInfo_Keys>FileVersion=1.1.5.0;ProductVersion=1.0.0.0;LegalTrademarks=Krzysztof Grochocki;LegalCopyright=Krzysztof Grochocki;CompanyName=Beherit Development;ProductName=NotifyMe</VerInfo_Keys>
+        <VerInfo_Keys>FileVersion=1.1.6.0;ProductVersion=1.0.0.0;LegalTrademarks=Krzysztof Grochocki;LegalCopyright=Krzysztof Grochocki;CompanyName=Beherit Development;ProductName=NotifyMe</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
-        <VerInfo_Release>5</VerInfo_Release>
-        <VerInfo_Keys>FileVersion=1.1.5.0;ProductVersion=1.0.0.0;LegalTrademarks=Krzysztof Grochocki;LegalCopyright=Krzysztof Grochocki;CompanyName=Beherit Development;ProductName=NotifyMe</VerInfo_Keys>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Release>6</VerInfo_Release>
+        <VerInfo_Keys>FileVersion=1.1.6.0;ProductVersion=1.0.0.0;LegalTrademarks=Krzysztof Grochocki;LegalCopyright=Krzysztof Grochocki;CompanyName=Beherit Development;ProductName=NotifyMe</VerInfo_Keys>
         <VerInfo_MinorVer>1</VerInfo_MinorVer>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
@@ -137,16 +137,15 @@
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <ILINK_LibraryPath>C:\Users\Public\Documents\Embarcadero\Studio\14.0\DCP\;..\..\..\Public\Documents\Embarcadero\Studio\14.0\DCP\;$(BDS)\lib\win32\release\;$(ILINK_LibraryPath)</ILINK_LibraryPath>
-        <VerInfo_Locale>1033</VerInfo_Locale>
         <LinkPackageStatics>rtl.lib;vcl.lib;IndyProtocols.lib;IndyCore.lib;IndySystem.lib;xmlrtl.lib;acnt_R.lib;vclimg.lib;vclx.lib</LinkPackageStatics>
         <VerInfo_MinorVer>1</VerInfo_MinorVer>
-        <Manifest_File>None</Manifest_File>
-        <VerInfo_Release>5</VerInfo_Release>
-        <VerInfo_Keys>FileVersion=1.1.5.0;ProductVersion=1.0.0.0;LegalTrademarks=Krzysztof Grochocki;LegalCopyright=Krzysztof Grochocki;CompanyName=Beherit Development;ProductName=NotifyMe</VerInfo_Keys>
+        <VerInfo_Release>6</VerInfo_Release>
+        <VerInfo_Keys>FileVersion=1.1.6.0;ProductVersion=1.0.0.0;LegalTrademarks=Krzysztof Grochocki;LegalCopyright=Krzysztof Grochocki;CompanyName=Beherit Development;ProductName=NotifyMe</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
-        <VerInfo_Keys>FileVersion=1.1.5.0;ProductVersion=1.0.0.0;LegalTrademarks=Krzysztof Grochocki;LegalCopyright=Krzysztof Grochocki;CompanyName=Beherit Development;ProductName=NotifyMe</VerInfo_Keys>
-        <VerInfo_Release>5</VerInfo_Release>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Keys>FileVersion=1.1.6.0;ProductVersion=1.0.0.0;LegalTrademarks=Krzysztof Grochocki;LegalCopyright=Krzysztof Grochocki;CompanyName=Beherit Development;ProductName=NotifyMe</VerInfo_Keys>
+        <VerInfo_Release>6</VerInfo_Release>
         <BCC_PCHName_Clang>NotifyMe.h</BCC_PCHName_Clang>
         <VerInfo_MinorVer>1</VerInfo_MinorVer>
     </PropertyGroup>
