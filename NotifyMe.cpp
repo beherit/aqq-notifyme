@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------
-// Copyright (C) 2013-2014 Krzysztof Grochocki
+// Copyright (C) 2013-2015 Krzysztof Grochocki
 //
 // This file is part of NotifyMe
 //
@@ -21,13 +21,12 @@
 
 #include <vcl.h>
 #include <windows.h>
-#pragma hdrstop
-#pragma argsused
-#include <PluginAPI.h>
 #include "SettingsFrm.h"
 #include <inifiles.hpp>
 #include <XMLDoc.hpp>
 #include <IdHashMessageDigest.hpp>
+#include <PluginAPI.h>
+#pragma hdrstop
 
 int WINAPI DllEntryPoint(HINSTANCE hinst, unsigned long reason, void* lpReserved)
 {
