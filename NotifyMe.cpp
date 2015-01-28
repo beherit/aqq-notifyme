@@ -26,6 +26,7 @@
 #include <XMLDoc.hpp>
 #include <IdHashMessageDigest.hpp>
 #include <PluginAPI.h>
+#include <LangAPI.hpp>
 #pragma hdrstop
 
 int WINAPI DllEntryPoint(HINSTANCE hinst, unsigned long reason, void* lpReserved)
@@ -60,6 +61,7 @@ bool FastStatsChk;
 //FORWARD-AQQ-HOOKS----------------------------------------------------------
 INT_PTR __stdcall OnColorChange(WPARAM wParam, LPARAM lParam);
 INT_PTR __stdcall OnContactsUpdate(WPARAM wParam, LPARAM lParam);
+INT_PTR __stdcall OnLangCodeChanged(WPARAM wParam, LPARAM lParam);
 INT_PTR __stdcall OnListReady(WPARAM wParam, LPARAM lParam);
 INT_PTR __stdcall OnReplyList(WPARAM wParam, LPARAM lParam);
 INT_PTR __stdcall OnThemeChanged(WPARAM wParam, LPARAM lParam);
@@ -67,6 +69,8 @@ INT_PTR __stdcall OnXMLIDDebug(WPARAM wParam, LPARAM lParam);
 INT_PTR __stdcall ServiceNotifyMeFastStatsItem(WPARAM wParam, LPARAM lParam);
 //FORWARD-TIMER--------------------------------------------------------------
 LRESULT CALLBACK TimerFrmProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+//FORWARD-OTHER-FUNCTION-----------------------------------------------------
+void RebuildNotifyMeFastStats();
 //---------------------------------------------------------------------------
 
 //Pobieranie sciezki katalogu prywatnego wtyczek
@@ -338,6 +342,31 @@ INT_PTR __stdcall OnContactsUpdate(WPARAM wParam, LPARAM lParam)
 }
 //---------------------------------------------------------------------------
 
+//Hook na zmiane lokalizacji
+INT_PTR __stdcall OnLangCodeChanged(WPARAM wParam, LPARAM lParam)
+{
+  //Czyszczenie cache lokalizacji
+  ClearLngCache();
+  //Pobranie sciezki do katalogu prywatnego uzytkownika
+  UnicodeString PluginUserDir = GetPluginUserDir();
+  //Ustawienie sciezki lokalizacji wtyczki
+  UnicodeString LangCode = (wchar_t*)lParam;
+  LangPath = PluginUserDir + "\\\\Languages\\\\NotifyMe\\\\" + LangCode + "\\\\";
+  if(!DirectoryExists(LangPath))
+  {
+	LangCode = (wchar_t*)PluginLink.CallService(AQQ_FUNCTION_GETDEFLANGCODE,0,0);
+	LangPath = PluginUserDir + "\\\\Languages\\\\NotifyMe\\\\" + LangCode + "\\\\";
+  }
+  //Aktualizacja lokalizacji form wtyczki
+  for(int i=0;i<Screen->FormCount;i++)
+   LangForm(Screen->Forms[i]);
+  //Aktualizacja lokalizacji elementu szybkiego dostepu do ustawien wtyczki (statystyki)
+  RebuildNotifyMeFastStats();
+
+  return 0;
+}
+//---------------------------------------------------------------------------
+
 //Hook na zakonczenie ladowania listy kontaktow przy starcie AQQ
 INT_PTR __stdcall OnListReady(WPARAM wParam, LPARAM lParam)
 {
@@ -463,7 +492,7 @@ INT_PTR __stdcall OnXMLIDDebug(WPARAM wParam, LPARAM lParam)
 				//Wlaczenie timera
 				SetTimer(hTimerFrm,TimerID,1000*CloudTimeOut,(TIMERPROC)TimerFrmProc);
 				//Pokazanie chmurki informacyjnej
-				ShowNotification(GetContactNick(From+":"+IntToStr(UserIdx)) + " sprawdza wersjê Twojego oprogramowania.");
+				ShowNotification(GetContactNick(From+":"+IntToStr(UserIdx)) + " " + GetLangStr("ChecksVersion"));
 			  }
 			  //Zapisywanie informacji do pliku ze statystykami
 			  if(StatsChk) SaveInfoToStatsFile(From,GetContactNick(From+":"+IntToStr(UserIdx)),1,GetAccountJID(XMLChunk.UserIdx));
@@ -491,7 +520,7 @@ INT_PTR __stdcall OnXMLIDDebug(WPARAM wParam, LPARAM lParam)
 				//Wlaczenie timera
 				SetTimer(hTimerFrm,TimerID,1000*CloudTimeOut,(TIMERPROC)TimerFrmProc);
 				//Pokazanie chmurki informacyjnej
-				ShowNotification(GetContactNick(From+":"+IntToStr(UserIdx)) + " sprawdza Twoj¹ ostatni¹ aktywnoœæ.");
+				ShowNotification(GetContactNick(From+":"+IntToStr(UserIdx)) + " " + GetLangStr("ChecksActivity"));
 			  }
 			  //Zapisywanie informacji do pliku ze statystykami
 			  if(StatsChk) SaveInfoToStatsFile(From,GetContactNick(From+":"+IntToStr(UserIdx)),2,GetAccountJID(XMLChunk.UserIdx));
@@ -519,11 +548,11 @@ INT_PTR __stdcall ServiceNotifyMeFastStatsItem(WPARAM wParam, LPARAM lParam)
 //Usuwanie elementu szybkiego dostepu do ustawien wtyczki (statystyki)
 void DestroyNotifyMeFastStats()
 {
-  TPluginAction BuildNotifyMeFastStatsItem;
-  ZeroMemory(&BuildNotifyMeFastStatsItem,sizeof(TPluginAction));
-  BuildNotifyMeFastStatsItem.cbSize = sizeof(TPluginAction);
-  BuildNotifyMeFastStatsItem.pszName = L"NotifyMeFastStatsItemButton";
-  PluginLink.CallService(AQQ_CONTROLS_DESTROYPOPUPMENUITEM,0,(LPARAM)(&BuildNotifyMeFastStatsItem));
+  TPluginAction DestroyNotifyMeFastStatsItem;
+  ZeroMemory(&DestroyNotifyMeFastStatsItem,sizeof(TPluginAction));
+  DestroyNotifyMeFastStatsItem.cbSize = sizeof(TPluginAction);
+  DestroyNotifyMeFastStatsItem.pszName = L"NotifyMeFastStatsItemButton";
+  PluginLink.CallService(AQQ_CONTROLS_DESTROYPOPUPMENUITEM,0,(LPARAM)(&DestroyNotifyMeFastStatsItem));
 }
 //---------------------------------------------------------------------------
 
@@ -534,11 +563,27 @@ void BuildNotifyMeFastStats()
   ZeroMemory(&BuildNotifyMeFastStatsItem,sizeof(TPluginAction));
   BuildNotifyMeFastStatsItem.cbSize = sizeof(TPluginAction);
   BuildNotifyMeFastStatsItem.pszName = L"NotifyMeFastStatsItemButton";
-  BuildNotifyMeFastStatsItem.pszCaption = L"NotifyMe (statystyki)";
+  BuildNotifyMeFastStatsItem.pszCaption = ("NotifyMe ("+GetLangStr("Statistics")+")").w_str();
   BuildNotifyMeFastStatsItem.IconIndex = FASTACCESS;
   BuildNotifyMeFastStatsItem.pszService = L"sNotifyMeFastStatsItem";
   BuildNotifyMeFastStatsItem.pszPopupName = L"popPlugins";
   PluginLink.CallService(AQQ_CONTROLS_CREATEPOPUPMENUITEM,0,(LPARAM)(&BuildNotifyMeFastStatsItem));
+}
+//---------------------------------------------------------------------------
+
+//Aktualizacja elementu szybkiego dostepu do ustawien wtyczki (statystyki)
+void RebuildNotifyMeFastStats()
+{
+  TPluginActionEdit RebuildNotifyMeFastStatsItem;
+  ZeroMemory(&RebuildNotifyMeFastStatsItem,sizeof(TPluginActionEdit));
+  RebuildNotifyMeFastStatsItem.cbSize = sizeof(TPluginActionEdit);
+  RebuildNotifyMeFastStatsItem.pszName = L"NotifyMeFastStatsItemButton";
+  RebuildNotifyMeFastStatsItem.Caption = ("NotifyMe ("+GetLangStr("Statistics")+")").w_str();
+  RebuildNotifyMeFastStatsItem.IconIndex = FASTACCESS;
+  RebuildNotifyMeFastStatsItem.Enabled = true;
+  RebuildNotifyMeFastStatsItem.Visible = true;
+  RebuildNotifyMeFastStatsItem.Checked = false;
+  PluginLink.CallService(AQQ_CONTROLS_EDITPOPUPMENUITEM,0,(LPARAM)(&RebuildNotifyMeFastStatsItem));
 }
 //---------------------------------------------------------------------------
 
@@ -608,6 +653,44 @@ extern "C" INT_PTR __declspec(dllexport) __stdcall Load(PPluginLink Link)
   PluginLink = *Link;
   //Sciezka folderu prywatnego wtyczek
   UnicodeString PluginUserDir = GetPluginUserDir();
+  //Tworzenie katalogow lokalizacji
+  if(!DirectoryExists(PluginUserDir+"\\\\Languages"))
+   CreateDir(PluginUserDir+"\\\\Languages");
+  if(!DirectoryExists(PluginUserDir+"\\\\Languages\\\\NotifyMe"))
+   CreateDir(PluginUserDir+"\\\\Languages\\\\NotifyMe");
+  if(!DirectoryExists(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN"))
+   CreateDir(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN");
+  if(!DirectoryExists(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\PL"))
+   CreateDir(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\PL");
+  //Wypakowanie plikow lokalizacji
+  //FAB7435FEF90C1CC68D7F2AC92815F36
+  if(!FileExists(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\Const.lng"))
+   ExtractRes((PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\Const.lng").w_str(),L"EN_CONST",L"DATA");
+  else if(MD5File(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\Const.lng")!="FAB7435FEF90C1CC68D7F2AC92815F36")
+   ExtractRes((PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\Const.lng").w_str(),L"EN_CONST",L"DATA");
+  //D1602F18F5BF725307F7A458E2411265
+  if(!FileExists(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\TSettingsForm.lng"))
+   ExtractRes((PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\TSettingsForm.lng").w_str(),L"EN_SETTINGSFRM",L"DATA");
+  else if(MD5File(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\TSettingsForm.lng")!="D1602F18F5BF725307F7A458E2411265")
+   ExtractRes((PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\TSettingsForm.lng").w_str(),L"EN_SETTINGSFRM",L"DATA");
+  //399F5F05929FA99B6A2F6C624D0FCECD
+  if(!FileExists(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\PL\\\\Const.lng"))
+   ExtractRes((PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\PL\\\\Const.lng").w_str(),L"PL_CONST",L"DATA");
+  else if(MD5File(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\PL\\\\Const.lng")!="399F5F05929FA99B6A2F6C624D0FCECD")
+   ExtractRes((PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\PL\\\\Const.lng").w_str(),L"PL_CONST",L"DATA");
+  //BD3719E0DD5A68AACE93887F7356F3C0
+  if(!FileExists(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\PL\\\\TSettingsForm.lng"))
+   ExtractRes((PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\PL\\\\TSettingsForm.lng").w_str(),L"PL_SETTINGSFRM",L"DATA");
+  else if(MD5File(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\PL\\\\TSettingsForm.lng")!="BD3719E0DD5A68AACE93887F7356F3C0")
+   ExtractRes((PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\PL\\\\TSettingsForm.lng").w_str(),L"PL_SETTINGSFRM",L"DATA");
+  //Ustawienie sciezki lokalizacji wtyczki
+  UnicodeString LangCode = (wchar_t*)PluginLink.CallService(AQQ_FUNCTION_GETLANGCODE,0,0);
+  LangPath = PluginUserDir + "\\\\Languages\\\\NotifyMe\\\\" + LangCode + "\\\\";
+  if(!DirectoryExists(LangPath))
+  {
+	LangCode = (wchar_t*)PluginLink.CallService(AQQ_FUNCTION_GETDEFLANGCODE,0,0);
+	LangPath = PluginUserDir + "\\\\Languages\\\\NotifyMe\\\\" + LangCode + "\\\\";
+  }
   //Tworzeniu katalogu z ustawieniami wtyczki
   if(!DirectoryExists(PluginUserDir+"\\\\NotifyMe"))
    CreateDir(PluginUserDir+"\\\\NotifyMe");
@@ -637,6 +720,8 @@ extern "C" INT_PTR __declspec(dllexport) __stdcall Load(PPluginLink Link)
   PluginLink.HookEvent(AQQ_SYSTEM_COLORCHANGE,OnColorChange);
   //Hook na zmianê stanu kontaktu
   PluginLink.HookEvent(AQQ_CONTACTS_UPDATE,OnContactsUpdate);
+  //Hook na zmiane lokalizacji
+  PluginLink.HookEvent(AQQ_SYSTEM_LANGCODE_CHANGED,OnLangCodeChanged);
   //Hook na zakonczenie ladowania listy kontaktow przy starcie AQQ
   PluginLink.HookEvent(AQQ_CONTACTS_LISTREADY,OnListReady);
   //Hook na enumeracje listy kontatkow
@@ -689,6 +774,7 @@ extern "C" INT_PTR __declspec(dllexport) __stdcall Unload()
   //Wyladowanie wszystkich hookow
   PluginLink.UnhookEvent(OnColorChange);
   PluginLink.UnhookEvent(OnContactsUpdate);
+  PluginLink.UnhookEvent(OnLangCodeChanged);
   PluginLink.UnhookEvent(OnListReady);
   PluginLink.UnhookEvent(OnReplyList);
   PluginLink.UnhookEvent(OnThemeChanged);

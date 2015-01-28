@@ -1,4 +1,5 @@
 object SettingsForm: TSettingsForm
+  Tag = 1
   Left = 0
   Top = 0
   ActiveControl = sPageControl
@@ -165,6 +166,7 @@ object SettingsForm: TSettingsForm
     ExplicitWidth = 254
   end
   object SaveButton: TsButton
+    Tag = 2
     Left = 243
     Top = 208
     Width = 75
@@ -178,6 +180,7 @@ object SettingsForm: TSettingsForm
     SkinData.SkinSection = 'BUTTON'
   end
   object CancelButton: TsButton
+    Tag = 3
     Left = 162
     Top = 208
     Width = 75
@@ -190,6 +193,7 @@ object SettingsForm: TSettingsForm
     SkinData.SkinSection = 'BUTTON'
   end
   object OKButton: TsButton
+    Tag = 4
     Left = 81
     Top = 208
     Width = 75
@@ -211,17 +215,19 @@ object SettingsForm: TSettingsForm
     Margins.Top = 6
     Margins.Right = 6
     Margins.Bottom = 6
-    ActivePage = SettingsTabSheet
+    ActivePage = StatsTabSheet
     Align = alClient
     TabOrder = 3
     AccessibleDisabledPages = False
     SkinData.SkinSection = 'PAGECONTROL'
     object SettingsTabSheet: TsTabSheet
+      Tag = 5
       Caption = 'Ustawienia'
       OnShow = SettingsTabSheetShow
       SkinData.CustomColor = False
       SkinData.CustomFont = False
       object NotificationLabel: TsLabel
+        Tag = 7
         Left = 12
         Top = 12
         Width = 127
@@ -229,6 +235,7 @@ object SettingsForm: TSettingsForm
         Caption = 'Wy'#347'wietl notyfikacj'#281' przy:'
       end
       object OnVersionCheckBox: TsCheckBox
+        Tag = 8
         Left = 24
         Top = 31
         Width = 195
@@ -243,6 +250,7 @@ object SettingsForm: TSettingsForm
         ImgUnchecked = 0
       end
       object OnLastCheckBox: TsCheckBox
+        Tag = 9
         Left = 24
         Top = 57
         Width = 182
@@ -257,6 +265,7 @@ object SettingsForm: TSettingsForm
         ImgUnchecked = 0
       end
       object CloudTimeOutSpinEdit: TsSpinEdit
+        Tag = 10
         Left = 173
         Top = 83
         Width = 41
@@ -281,6 +290,7 @@ object SettingsForm: TSettingsForm
         Value = 6
       end
       object StatsCheckBox: TsCheckBox
+        Tag = 11
         Left = 12
         Top = 110
         Width = 265
@@ -293,6 +303,7 @@ object SettingsForm: TSettingsForm
         ImgUnchecked = 0
       end
       object FastStatsCheckBox: TsCheckBox
+        Tag = 12
         Left = 24
         Top = 136
         Width = 253
@@ -307,15 +318,12 @@ object SettingsForm: TSettingsForm
       end
     end
     object StatsTabSheet: TsTabSheet
+      Tag = 6
       Caption = 'Statystyki'
       Enabled = False
       OnShow = StatsTabSheetShow
       SkinData.CustomColor = False
       SkinData.CustomFont = False
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object ProgressPanel: TsPanel
         AlignWithMargins = True
         Left = 12
@@ -517,13 +525,15 @@ object SettingsForm: TSettingsForm
           AlignWithMargins = True
           Left = 1
           Top = 75
-          Width = 165
-          Height = 13
+          Width = 280
+          Height = 14
           Margins.Left = 0
           Margins.Right = 0
           Align = alClient
           Alignment = taCenter
           Caption = 'Przebudowa pliku XML statystyk...'
+          ExplicitWidth = 165
+          ExplicitHeight = 13
         end
         object RebuildXMLProgressBar: TsProgressBar
           AlignWithMargins = True
@@ -537,7 +547,6 @@ object SettingsForm: TSettingsForm
           Align = alBottom
           TabOrder = 0
           SkinData.SkinSection = 'GAUGE'
-          ExplicitTop = 92
         end
       end
       object sListView: TsListView
@@ -562,26 +571,31 @@ object SettingsForm: TSettingsForm
             Caption = 'Pseudonim'
             MaxWidth = 65
             MinWidth = 65
+            Tag = 13
             Width = 65
           end
           item
             Caption = 'JID'
+            Tag = 14
             Width = 0
           end
           item
             Caption = 'Typ'
             MaxWidth = 88
             MinWidth = 88
+            Tag = 15
             Width = 88
           end
           item
             Caption = 'Data'
             MaxWidth = 108
             MinWidth = 108
+            Tag = 16
             Width = 108
           end
           item
             Caption = 'Konto'
+            Tag = 17
             Width = 0
           end>
         ReadOnly = True
@@ -592,6 +606,7 @@ object SettingsForm: TSettingsForm
         OnCompare = sListViewCompare
       end
       object ReloadButton: TsButton
+        Tag = 18
         Left = 219
         Top = 131
         Width = 75
@@ -604,6 +619,7 @@ object SettingsForm: TSettingsForm
         SkinData.SkinSection = 'BUTTON'
       end
       object DeleteButton: TsButton
+        Tag = 19
         Left = 138
         Top = 131
         Width = 75
@@ -618,6 +634,7 @@ object SettingsForm: TSettingsForm
         SkinData.SkinSection = 'BUTTON'
       end
       object ExInfoCheckBox: TsCheckBox
+        Tag = 20
         Left = 12
         Top = 134
         Width = 120
@@ -717,6 +734,7 @@ object SettingsForm: TSettingsForm
     Left = 96
     Top = 208
     object aDeleteAll: TMenuItem
+      Tag = 21
       Caption = 'Usu'#324' wszystko'
       OnClick = aDeleteAllClick
     end

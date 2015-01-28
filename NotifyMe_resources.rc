@@ -1,2 +1,6 @@
 FASTACCESS DATA "Data\\FastAccess.png"
 SHARED DATA "Data\\NotifyMe.dll.png"
+EN_CONST DATA "Languages\\EN\\Const.lng"
+EN_SETTINGSFRM DATA "Languages\\EN\\TSettingsForm.lng"
+PL_CONST DATA "Languages\\PL\\Const.lng"
+PL_SETTINGSFRM DATA "Languages\\PL\\TSettingsForm.lng"
