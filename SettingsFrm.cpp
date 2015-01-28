@@ -22,6 +22,7 @@
 //---------------------------------------------------------------------------
 #include <vcl.h>
 #include <XMLDoc.hpp>
+#include <LangAPI.hpp>
 #pragma hdrstop
 #include "SettingsFrm.h"
 //---------------------------------------------------------------------------
@@ -69,6 +70,8 @@ void __fastcall TSettingsForm::WMTransparency(TMessage &Message)
 
 void __fastcall TSettingsForm::FormCreate(TObject *Sender)
 {
+  //Lokalizowanie formy
+  LangForm(this);
   //Wlaczona zaawansowana stylizacja okien
   if(ChkSkinEnabled())
   {
@@ -190,8 +193,8 @@ void __fastcall TSettingsForm::aGetDataFromXMLExecute(TObject *Sender)
 	  sListView->Items->Add();
 	  sListView->Items->Item[sListView->Items->Count-1]->Caption = ChildNodes->Attributes["nick"];
 	  sListView->Items->Item[sListView->Items->Count-1]->SubItems->Add(ChildNodes->Attributes["jid"]);
-	  if(ChildNodes->Attributes["type"]=="1") sListView->Items->Item[sListView->Items->Count-1]->SubItems->Add("Wersja oprogramowania");
-	  else sListView->Items->Item[sListView->Items->Count-1]->SubItems->Add("Ostatnia aktywnoœæ");
+	  if(ChildNodes->Attributes["type"]=="1") sListView->Items->Item[sListView->Items->Count-1]->SubItems->Add(GetLangStr("Version"));
+	  else sListView->Items->Item[sListView->Items->Count-1]->SubItems->Add(GetLangStr("Activity"));
 	  sListView->Items->Item[sListView->Items->Count-1]->SubItems->Add(ChildNodes->Attributes["time"]);
 	  sListView->Items->Item[sListView->Items->Count-1]->SubItems->Add(ChildNodes->Attributes["target"]);
 	}
@@ -333,7 +336,7 @@ void __fastcall TSettingsForm::RebuildXMLThreadComponentRun(TIdThreadComponent *
 	UnicodeString Nick = sListView->Items->Item[Count]->Caption;
 	UnicodeString JID = sListView->Items->Item[Count]->SubItems->Strings[0];
 	UnicodeString Type = sListView->Items->Item[Count]->SubItems->Strings[1];
-	if(Type=="Wersja oprogramowania") Type = "1";
+	if(Type==GetLangStr("Version")) Type = "1";
 	else Type = "2";
 	UnicodeString Time = sListView->Items->Item[Count]->SubItems->Strings[2];
 	UnicodeString Target = sListView->Items->Item[Count]->SubItems->Strings[3];
