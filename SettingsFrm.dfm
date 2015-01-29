@@ -6,7 +6,7 @@ object SettingsForm: TSettingsForm
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'NotifyMe - ustawienia'
-  ClientHeight = 296
+  ClientHeight = 305
   ClientWidth = 326
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -157,7 +157,7 @@ object SettingsForm: TSettingsForm
   TextHeight = 13
   object Bevel: TsBevel
     Left = 0
-    Top = 258
+    Top = 267
     Width = 326
     Height = 38
     Align = alBottom
@@ -168,7 +168,7 @@ object SettingsForm: TSettingsForm
   object SaveButton: TsButton
     Tag = 2
     Left = 243
-    Top = 266
+    Top = 275
     Width = 75
     Height = 25
     Align = alCustom
@@ -178,12 +178,12 @@ object SettingsForm: TSettingsForm
     TabOrder = 0
     OnClick = SaveButtonClick
     SkinData.SkinSection = 'BUTTON'
-    ExplicitTop = 208
+    ExplicitTop = 266
   end
   object CancelButton: TsButton
     Tag = 3
     Left = 162
-    Top = 266
+    Top = 275
     Width = 75
     Height = 25
     Align = alCustom
@@ -192,12 +192,12 @@ object SettingsForm: TSettingsForm
     TabOrder = 1
     OnClick = aExitExecute
     SkinData.SkinSection = 'BUTTON'
-    ExplicitTop = 208
+    ExplicitTop = 266
   end
   object OKButton: TsButton
     Tag = 4
     Left = 81
-    Top = 266
+    Top = 275
     Width = 75
     Height = 25
     Align = alCustom
@@ -206,14 +206,14 @@ object SettingsForm: TSettingsForm
     TabOrder = 2
     OnClick = OKButtonClick
     SkinData.SkinSection = 'BUTTON'
-    ExplicitTop = 208
+    ExplicitTop = 266
   end
   object sPageControl: TsPageControl
     AlignWithMargins = True
     Left = 6
     Top = 6
     Width = 314
-    Height = 246
+    Height = 255
     Margins.Left = 6
     Margins.Top = 6
     Margins.Right = 6
@@ -223,14 +223,14 @@ object SettingsForm: TSettingsForm
     TabOrder = 3
     AccessibleDisabledPages = False
     SkinData.SkinSection = 'PAGECONTROL'
-    ExplicitHeight = 249
+    ExplicitHeight = 246
     object SettingsTabSheet: TsTabSheet
       Tag = 5
       Caption = 'Ustawienia'
       OnShow = SettingsTabSheetShow
       SkinData.CustomColor = False
       SkinData.CustomFont = False
-      ExplicitHeight = 160
+      ExplicitHeight = 218
       object NotificationLabel: TsLabel
         Tag = 7
         Left = 12
@@ -353,6 +353,9 @@ object SettingsForm: TSettingsForm
       OnShow = StatsTabSheetShow
       SkinData.CustomColor = False
       SkinData.CustomFont = False
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
       ExplicitHeight = 221
       object ProgressPanel: TsPanel
         AlignWithMargins = True
@@ -555,15 +558,13 @@ object SettingsForm: TSettingsForm
           AlignWithMargins = True
           Left = 1
           Top = 75
-          Width = 280
-          Height = 14
+          Width = 165
+          Height = 13
           Margins.Left = 0
           Margins.Right = 0
           Align = alClient
           Alignment = taCenter
           Caption = 'Przebudowa pliku XML statystyk...'
-          ExplicitWidth = 165
-          ExplicitHeight = 13
         end
         object RebuildXMLProgressBar: TsProgressBar
           AlignWithMargins = True
