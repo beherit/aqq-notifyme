@@ -481,7 +481,7 @@ INT_PTR __stdcall OnXMLIDDebug(WPARAM wParam, LPARAM lParam)
 			//Anty self-check & server-check
 			if((From!=GetAccountJID(XMLChunk.UserIdx))&&(From!=GetAccountJIDW(XMLChunk.UserIdx)))
 			{
-              //Zabezpieczenie przed spamem chmurek
+			  //Zabezpieczenie przed spamem
 			  if(!AntySpamList->ValueExists("Version",From))
 			  {
 				//Wygenerowanie losowego ID timera
@@ -490,7 +490,7 @@ INT_PTR __stdcall OnXMLIDDebug(WPARAM wParam, LPARAM lParam)
 				AntySpamList->WriteInteger("Version",From,TimerID);
 				AntySpamList->WriteString("Version",TimerID,From);
 				//Wlaczenie timera
-				SetTimer(hTimerFrm,TimerID,1000*CloudTimeOut,(TIMERPROC)TimerFrmProc);
+				SetTimer(hTimerFrm,TimerID,5000,(TIMERPROC)TimerFrmProc);
 				//Pokazanie chmurki informacyjnej
 				ShowNotification(GetContactNick(From+":"+IntToStr(UserIdx)) + " " + GetLangStr("ChecksVersion"));
 			  }
@@ -509,7 +509,7 @@ INT_PTR __stdcall OnXMLIDDebug(WPARAM wParam, LPARAM lParam)
 			//Anty self-check & server-check
 			if((From!=GetAccountJID(XMLChunk.UserIdx))&&(From!=GetAccountJIDW(XMLChunk.UserIdx)))
 			{
-			  //Zabezpieczenie przed spamem chmurek
+			  //Zabezpieczenie przed spamem
 			  if(!AntySpamList->ValueExists("Last",From))
 			  {
 				//Wygenerowanie losowego ID timera
@@ -518,7 +518,7 @@ INT_PTR __stdcall OnXMLIDDebug(WPARAM wParam, LPARAM lParam)
 				AntySpamList->WriteInteger("Last",From,TimerID);
 				AntySpamList->WriteString("Last",TimerID,From);
 				//Wlaczenie timera
-				SetTimer(hTimerFrm,TimerID,1000*CloudTimeOut,(TIMERPROC)TimerFrmProc);
+				SetTimer(hTimerFrm,TimerID,5000,(TIMERPROC)TimerFrmProc);
 				//Pokazanie chmurki informacyjnej
 				ShowNotification(GetContactNick(From+":"+IntToStr(UserIdx)) + " " + GetLangStr("ChecksActivity"));
 			  }
