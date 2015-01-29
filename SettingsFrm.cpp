@@ -126,6 +126,8 @@ void __fastcall TSettingsForm::aLoadSettingsExecute(TObject *Sender)
   OnVersionCheckBox->Checked = Ini->ReadBool("Settings","OnVersion",true);
   OnLastCheckBox->Checked = Ini->ReadBool("Settings","OnLast",true);
   CloudTimeOutSpinEdit->Value = Ini->ReadInteger("Settings","CloudTimeOut",6);
+  FrmSendNotificationCheckBox->Checked = Ini->ReadBool("Settings","FrmSendNotification",false);
+  SaveInArchiveCheckBox->Checked = Ini->ReadBool("Settings","SaveInArchive",false);
   StatsCheckBox->Checked = Ini->ReadBool("Settings","Stats",false);
   StatsTabSheet->Enabled = StatsCheckBox->Checked;
   FastStatsCheckBox->Enabled = StatsCheckBox->Checked;
@@ -141,6 +143,8 @@ void __fastcall TSettingsForm::aSaveSettingsExecute(TObject *Sender)
   Ini->WriteBool("Settings","OnVersion",OnVersionCheckBox->Checked);
   Ini->WriteBool("Settings","OnLast",OnLastCheckBox->Checked);
   Ini->WriteInteger("Settings","CloudTimeOut",CloudTimeOutSpinEdit->Value);
+  Ini->WriteBool("Settings","FrmSendNotification",FrmSendNotificationCheckBox->Checked);
+  Ini->WriteBool("Settings","SaveInArchive",SaveInArchiveCheckBox->Checked);
   Ini->WriteBool("Settings","Stats",StatsCheckBox->Checked);
   Ini->WriteBool("Settings","FastStats",FastStatsCheckBox->Checked);
   Ini->WriteBool("Settings","ExInfo",ExInfoCheckBox->Checked);

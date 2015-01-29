@@ -56,6 +56,8 @@ int FASTACCESS;
 bool OnVersionChk;
 bool OnLastChk;
 int CloudTimeOut;
+bool FrmSendNotificationChk;
+bool SaveInArchiveChk;
 bool StatsChk;
 bool FastStatsChk;
 //FORWARD-AQQ-HOOKS----------------------------------------------------------
@@ -205,7 +207,7 @@ void ShowFrmSendNotification(UnicodeString JID, UnicodeString Res, int UserIdx, 
   ZeroMemory(&PluginMicroMsg, sizeof(TPluginMicroMsg));
   PluginMicroMsg.cbSize = sizeof(TPluginMicroMsg);
   PluginMicroMsg.Msg = Text.w_str();
-  PluginMicroMsg.SaveToArchive = false;
+  PluginMicroMsg.SaveToArchive = SaveInArchiveChk;
   //Struktura wiadomosci
   TPluginContact PluginContact;
   ZeroMemory(&PluginContact, sizeof(TPluginContact));
@@ -523,7 +525,7 @@ INT_PTR __stdcall OnXMLIDDebug(WPARAM wParam, LPARAM lParam)
 				//Pokazanie chmurki informacyjnej
 				ShowNotification(Text);
 				//Pokazanie informacji w oknie rozmowy
-				ShowFrmSendNotification(From,Res,UserIdx,Text);
+				if(FrmSendNotificationChk) ShowFrmSendNotification(From,Res,UserIdx,Text);
 			  }
 			  //Zapisywanie informacji do pliku ze statystykami
 			  if(StatsChk) SaveInfoToStatsFile(From,GetContactNick(From+":"+IntToStr(UserIdx)),1,GetAccountJID(XMLChunk.UserIdx));
@@ -561,7 +563,7 @@ INT_PTR __stdcall OnXMLIDDebug(WPARAM wParam, LPARAM lParam)
 				//Pokazanie chmurki informacyjnej
 				ShowNotification(Text);
 				//Pokazanie informacji w oknie rozmowy
-				ShowFrmSendNotification(From,Res,UserIdx,Text);
+				if(FrmSendNotificationChk) ShowFrmSendNotification(From,Res,UserIdx,Text);
 			  }
 			  //Zapisywanie informacji do pliku ze statystykami
 			  if(StatsChk) SaveInfoToStatsFile(From,GetContactNick(From+":"+IntToStr(UserIdx)),2,GetAccountJID(XMLChunk.UserIdx));
@@ -635,6 +637,8 @@ void LoadSettings()
   OnVersionChk = Ini->ReadBool("Settings","OnVersion",true);
   OnLastChk = Ini->ReadBool("Settings","OnLast",true);
   CloudTimeOut = Ini->ReadInteger("Settings","CloudTimeOut",6);
+  FrmSendNotificationChk = Ini->ReadBool("Settings","FrmSendNotification",false);
+  SaveInArchiveChk = Ini->ReadBool("Settings","SaveInArchive",false);
   StatsChk = Ini->ReadBool("Settings","Stats",false);
   FastStatsChk = Ini->ReadBool("Settings","FastStats",false);
   DestroyNotifyMeFastStats();
@@ -709,20 +713,20 @@ extern "C" INT_PTR __declspec(dllexport) __stdcall Load(PPluginLink Link)
    ExtractRes((PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\Const.lng").w_str(),L"EN_CONST",L"DATA");
   else if(MD5File(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\Const.lng")!="FAB7435FEF90C1CC68D7F2AC92815F36")
    ExtractRes((PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\Const.lng").w_str(),L"EN_CONST",L"DATA");
-  //D1602F18F5BF725307F7A458E2411265
+  //E7C92D9549F8693033AA4407EDE86195
   if(!FileExists(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\TSettingsForm.lng"))
    ExtractRes((PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\TSettingsForm.lng").w_str(),L"EN_SETTINGSFRM",L"DATA");
-  else if(MD5File(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\TSettingsForm.lng")!="D1602F18F5BF725307F7A458E2411265")
+  else if(MD5File(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\TSettingsForm.lng")!="E7C92D9549F8693033AA4407EDE86195")
    ExtractRes((PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\TSettingsForm.lng").w_str(),L"EN_SETTINGSFRM",L"DATA");
   //399F5F05929FA99B6A2F6C624D0FCECD
   if(!FileExists(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\PL\\\\Const.lng"))
    ExtractRes((PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\PL\\\\Const.lng").w_str(),L"PL_CONST",L"DATA");
   else if(MD5File(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\PL\\\\Const.lng")!="399F5F05929FA99B6A2F6C624D0FCECD")
    ExtractRes((PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\PL\\\\Const.lng").w_str(),L"PL_CONST",L"DATA");
-  //BD3719E0DD5A68AACE93887F7356F3C0
+  //A68514FE278BAA195967EAE09D0CD1A7
   if(!FileExists(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\PL\\\\TSettingsForm.lng"))
    ExtractRes((PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\PL\\\\TSettingsForm.lng").w_str(),L"PL_SETTINGSFRM",L"DATA");
-  else if(MD5File(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\PL\\\\TSettingsForm.lng")!="BD3719E0DD5A68AACE93887F7356F3C0")
+  else if(MD5File(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\PL\\\\TSettingsForm.lng")!="A68514FE278BAA195967EAE09D0CD1A7")
    ExtractRes((PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\PL\\\\TSettingsForm.lng").w_str(),L"PL_SETTINGSFRM",L"DATA");
   //Ustawienie sciezki lokalizacji wtyczki
   UnicodeString LangCode = (wchar_t*)PluginLink.CallService(AQQ_FUNCTION_GETLANGCODE,0,0);
