@@ -385,6 +385,9 @@ INT_PTR __stdcall OnLangCodeChanged(WPARAM wParam, LPARAM lParam)
    LangForm(Screen->Forms[i]);
   //Aktualizacja lokalizacji elementu szybkiego dostepu do ustawien wtyczki (statystyki)
   RebuildNotifyMeFastStats();
+  //Aktualizacja stastyk w oknie ustawien
+  if((hSettingsForm)&&(StatsChk))
+   hSettingsForm->aGetDataFromXML->Execute();
 
   return 0;
 }
