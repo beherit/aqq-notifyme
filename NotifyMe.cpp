@@ -197,6 +197,27 @@ void ShowNotification(UnicodeString Text)
 }
 //---------------------------------------------------------------------------
 
+//Pokazanie informacji w oknie rozmowy
+void ShowFrmSendNotification(UnicodeString JID, UnicodeString Res, int UserIdx, UnicodeString Text)
+{
+  //Struktura kontatku
+  TPluginMicroMsg PluginMicroMsg;
+  ZeroMemory(&PluginMicroMsg, sizeof(TPluginMicroMsg));
+  PluginMicroMsg.cbSize = sizeof(TPluginMicroMsg);
+  PluginMicroMsg.Msg = Text.w_str();
+  PluginMicroMsg.SaveToArchive = false;
+  //Struktura wiadomosci
+  TPluginContact PluginContact;
+  ZeroMemory(&PluginContact, sizeof(TPluginContact));
+  PluginContact.cbSize = sizeof(TPluginContact);
+  PluginContact.JID = JID.w_str();
+  PluginContact.Resource = Res.w_str();
+  PluginContact.UserIdx = UserIdx;
+  //Pokazanie informacji
+  PluginLink.CallService(AQQ_CONTACTS_ADDLINEINFO,(WPARAM)(&PluginContact),(LPARAM)(&PluginMicroMsg));
+}
+//---------------------------------------------------------------------------
+
 //Zapisywanie informacji do pliku ze statystykami
 void SaveInfoToStatsFile(UnicodeString JID, UnicodeString Nick, int Type, UnicodeString Target)
 {
@@ -476,7 +497,13 @@ INT_PTR __stdcall OnXMLIDDebug(WPARAM wParam, LPARAM lParam)
 			//Pobieranie nadawcy pakietu XML
 			TPluginXMLChunk XMLChunk = *(PPluginXMLChunk)lParam;
 			UnicodeString From = (wchar_t*)XMLChunk.From;
-			if(From.Pos("/")) From = From.Delete(From.Pos("/"),From.Length());
+			UnicodeString Res = "";
+			if(From.Pos("/"))
+			{
+			  Res = From;
+			  Res = Res.Delete(1,Res.Pos("/"));
+			  From = From.Delete(From.Pos("/"),From.Length());
+			}
 			int UserIdx = XMLChunk.UserIdx;
 			//Anty self-check & server-check
 			if((From!=GetAccountJID(XMLChunk.UserIdx))&&(From!=GetAccountJIDW(XMLChunk.UserIdx)))
@@ -491,8 +518,12 @@ INT_PTR __stdcall OnXMLIDDebug(WPARAM wParam, LPARAM lParam)
 				AntySpamList->WriteString("Version",TimerID,From);
 				//Wlaczenie timera
 				SetTimer(hTimerFrm,TimerID,5000,(TIMERPROC)TimerFrmProc);
+				//Ustawianie tekstu notyfikacji
+				UnicodeString Text = GetContactNick(From+":"+IntToStr(UserIdx)) + " " + GetLangStr("ChecksVersion");
 				//Pokazanie chmurki informacyjnej
-				ShowNotification(GetContactNick(From+":"+IntToStr(UserIdx)) + " " + GetLangStr("ChecksVersion"));
+				ShowNotification(Text);
+				//Pokazanie informacji w oknie rozmowy
+				ShowFrmSendNotification(From,Res,UserIdx,Text);
 			  }
 			  //Zapisywanie informacji do pliku ze statystykami
 			  if(StatsChk) SaveInfoToStatsFile(From,GetContactNick(From+":"+IntToStr(UserIdx)),1,GetAccountJID(XMLChunk.UserIdx));
@@ -504,7 +535,13 @@ INT_PTR __stdcall OnXMLIDDebug(WPARAM wParam, LPARAM lParam)
 			//Pobieranie nadawcy pakietu XML
 			TPluginXMLChunk XMLChunk = *(PPluginXMLChunk)lParam;
 			UnicodeString From = (wchar_t*)XMLChunk.From;
-			if(From.Pos("/")) From = From.Delete(From.Pos("/"),From.Length());
+			UnicodeString Res = "";
+			if(From.Pos("/"))
+			{
+			  Res = From;
+			  Res = Res.Delete(1,Res.Pos("/"));
+			  From = From.Delete(From.Pos("/"),From.Length());
+			}
 			int UserIdx = XMLChunk.UserIdx;
 			//Anty self-check & server-check
 			if((From!=GetAccountJID(XMLChunk.UserIdx))&&(From!=GetAccountJIDW(XMLChunk.UserIdx)))
@@ -519,8 +556,12 @@ INT_PTR __stdcall OnXMLIDDebug(WPARAM wParam, LPARAM lParam)
 				AntySpamList->WriteString("Last",TimerID,From);
 				//Wlaczenie timera
 				SetTimer(hTimerFrm,TimerID,5000,(TIMERPROC)TimerFrmProc);
+				//Ustawianie tekstu notyfikacji
+				UnicodeString Text = GetContactNick(From+":"+IntToStr(UserIdx)) + " " + GetLangStr("ChecksActivity");
 				//Pokazanie chmurki informacyjnej
-				ShowNotification(GetContactNick(From+":"+IntToStr(UserIdx)) + " " + GetLangStr("ChecksActivity"));
+				ShowNotification(Text);
+				//Pokazanie informacji w oknie rozmowy
+				ShowFrmSendNotification(From,Res,UserIdx,Text);
 			  }
 			  //Zapisywanie informacji do pliku ze statystykami
 			  if(StatsChk) SaveInfoToStatsFile(From,GetContactNick(From+":"+IntToStr(UserIdx)),2,GetAccountJID(XMLChunk.UserIdx));
