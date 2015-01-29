@@ -323,6 +323,8 @@ object SettingsForm: TSettingsForm
         Width = 198
         Height = 20
         Caption = 'Pokazuj notyfikacj'#281' w oknie rozmowy'
+        Checked = True
+        State = cbChecked
         TabOrder = 3
         OnClick = aAllowSaveExecute
         SkinData.SkinSection = 'CHECKBOX'

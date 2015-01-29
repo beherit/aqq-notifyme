@@ -637,7 +637,7 @@ void LoadSettings()
   OnVersionChk = Ini->ReadBool("Settings","OnVersion",true);
   OnLastChk = Ini->ReadBool("Settings","OnLast",true);
   CloudTimeOut = Ini->ReadInteger("Settings","CloudTimeOut",6);
-  FrmSendNotificationChk = Ini->ReadBool("Settings","FrmSendNotification",false);
+  FrmSendNotificationChk = Ini->ReadBool("Settings","FrmSendNotification",true);
   SaveInArchiveChk = Ini->ReadBool("Settings","SaveInArchive",false);
   StatsChk = Ini->ReadBool("Settings","Stats",false);
   FastStatsChk = Ini->ReadBool("Settings","FastStats",false);

@@ -126,7 +126,7 @@ void __fastcall TSettingsForm::aLoadSettingsExecute(TObject *Sender)
   OnVersionCheckBox->Checked = Ini->ReadBool("Settings","OnVersion",true);
   OnLastCheckBox->Checked = Ini->ReadBool("Settings","OnLast",true);
   CloudTimeOutSpinEdit->Value = Ini->ReadInteger("Settings","CloudTimeOut",6);
-  FrmSendNotificationCheckBox->Checked = Ini->ReadBool("Settings","FrmSendNotification",false);
+  FrmSendNotificationCheckBox->Checked = Ini->ReadBool("Settings","FrmSendNotification",true);
   SaveInArchiveCheckBox->Checked = Ini->ReadBool("Settings","SaveInArchive",false);
   StatsCheckBox->Checked = Ini->ReadBool("Settings","Stats",false);
   StatsTabSheet->Enabled = StatsCheckBox->Checked;
