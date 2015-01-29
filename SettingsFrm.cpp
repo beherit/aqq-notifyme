@@ -265,7 +265,7 @@ void __fastcall TSettingsForm::SettingsTabSheetShow(TObject *Sender)
   //Szerokosc formy
   Width = 332;
   //Wysokosc formy
-  Height = 267;
+  Height = 327;
 }
 //---------------------------------------------------------------------------
 
@@ -288,7 +288,7 @@ void __fastcall TSettingsForm::aShowExtInfoExecute(TObject *Sender)
 	//Szerokosc formy
 	Width = 512;
 	//Wysokosc formy
-	Height = 352;
+	Height = 412;
 	//Szerokosc kolumn
 	sListView->Column[1]->Width = 90;
 	sListView->Column[4]->Width = 90;
@@ -301,7 +301,7 @@ void __fastcall TSettingsForm::aShowExtInfoExecute(TObject *Sender)
 	//Szerokosc formy
 	Width = 332;
 	//Wysokosc formy
-	Height = 267;
+	Height = 327;
 	//Szerokosc kolumn
 	sListView->Column[1]->Width = 0;
 	sListView->Column[4]->Width = 0;
