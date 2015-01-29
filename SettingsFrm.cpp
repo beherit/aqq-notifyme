@@ -177,6 +177,7 @@ void __fastcall TSettingsForm::OKButtonClick(TObject *Sender)
 void __fastcall TSettingsForm::aAllowSaveExecute(TObject *Sender)
 {
   SaveButton->Enabled = true;
+  SaveInArchiveCheckBox->Enabled = FrmSendNotificationCheckBox->Checked;
   StatsTabSheet->Enabled = StatsCheckBox->Checked;
   FastStatsCheckBox->Enabled = StatsCheckBox->Checked;
 }

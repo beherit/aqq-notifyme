@@ -178,7 +178,6 @@ object SettingsForm: TSettingsForm
     TabOrder = 0
     OnClick = SaveButtonClick
     SkinData.SkinSection = 'BUTTON'
-    ExplicitTop = 266
   end
   object CancelButton: TsButton
     Tag = 3
@@ -192,7 +191,6 @@ object SettingsForm: TSettingsForm
     TabOrder = 1
     OnClick = aExitExecute
     SkinData.SkinSection = 'BUTTON'
-    ExplicitTop = 266
   end
   object OKButton: TsButton
     Tag = 4
@@ -206,7 +204,6 @@ object SettingsForm: TSettingsForm
     TabOrder = 2
     OnClick = OKButtonClick
     SkinData.SkinSection = 'BUTTON'
-    ExplicitTop = 266
   end
   object sPageControl: TsPageControl
     AlignWithMargins = True
@@ -223,14 +220,12 @@ object SettingsForm: TSettingsForm
     TabOrder = 3
     AccessibleDisabledPages = False
     SkinData.SkinSection = 'PAGECONTROL'
-    ExplicitHeight = 246
     object SettingsTabSheet: TsTabSheet
       Tag = 5
       Caption = 'Ustawienia'
       OnShow = SettingsTabSheetShow
       SkinData.CustomColor = False
       SkinData.CustomFont = False
-      ExplicitHeight = 218
       object NotificationLabel: TsLabel
         Tag = 7
         Left = 12
@@ -329,6 +324,7 @@ object SettingsForm: TSettingsForm
         Height = 20
         Caption = 'Pokazuj notyfikacj'#281' w oknie rozmowy'
         TabOrder = 3
+        OnClick = aAllowSaveExecute
         SkinData.SkinSection = 'CHECKBOX'
         ImgChecked = 0
         ImgUnchecked = 0
@@ -341,6 +337,7 @@ object SettingsForm: TSettingsForm
         Height = 20
         Caption = 'Zapisuj informacj'#281' w archiwum'
         TabOrder = 4
+        OnClick = aAllowSaveExecute
         SkinData.SkinSection = 'CHECKBOX'
         ImgChecked = 0
         ImgUnchecked = 0
@@ -353,10 +350,6 @@ object SettingsForm: TSettingsForm
       OnShow = StatsTabSheetShow
       SkinData.CustomColor = False
       SkinData.CustomFont = False
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 221
       object ProgressPanel: TsPanel
         AlignWithMargins = True
         Left = 12
@@ -558,13 +551,15 @@ object SettingsForm: TSettingsForm
           AlignWithMargins = True
           Left = 1
           Top = 75
-          Width = 165
-          Height = 13
+          Width = 280
+          Height = 14
           Margins.Left = 0
           Margins.Right = 0
           Align = alClient
           Alignment = taCenter
           Caption = 'Przebudowa pliku XML statystyk...'
+          ExplicitWidth = 165
+          ExplicitHeight = 13
         end
         object RebuildXMLProgressBar: TsProgressBar
           AlignWithMargins = True
@@ -635,7 +630,6 @@ object SettingsForm: TSettingsForm
         ViewStyle = vsReport
         OnColumnClick = sListViewColumnClick
         OnCompare = sListViewCompare
-        ExplicitHeight = 174
       end
       object ReloadButton: TsButton
         Tag = 18
@@ -649,7 +643,6 @@ object SettingsForm: TSettingsForm
         TabOrder = 1
         OnClick = aGetDataFromXMLExecute
         SkinData.SkinSection = 'BUTTON'
-        ExplicitTop = 192
       end
       object DeleteButton: TsButton
         Tag = 19
@@ -665,7 +658,6 @@ object SettingsForm: TSettingsForm
         TabOrder = 2
         OnClick = DeleteButtonClick
         SkinData.SkinSection = 'BUTTON'
-        ExplicitTop = 192
       end
       object ExInfoCheckBox: TsCheckBox
         Tag = 20
@@ -681,7 +673,6 @@ object SettingsForm: TSettingsForm
         SkinData.SkinSection = 'CHECKBOX'
         ImgChecked = 0
         ImgUnchecked = 0
-        ExplicitTop = 195
       end
     end
   end
