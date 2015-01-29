@@ -84,6 +84,8 @@ __published:	// IDE-managed Components
 	TsLabel *RebuildXMLLabel;
 	TImage *ProgressImage;
 	TsPanel *ProgressPanel;
+	TsCheckBox *FrmSendNotificationCheckBox;
+	TsCheckBox *SaveInArchiveCheckBox;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormShow(TObject *Sender);
 	void __fastcall aExitExecute(TObject *Sender);

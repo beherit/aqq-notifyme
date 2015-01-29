@@ -6,7 +6,7 @@ object SettingsForm: TSettingsForm
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'NotifyMe - ustawienia'
-  ClientHeight = 238
+  ClientHeight = 296
   ClientWidth = 326
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -157,7 +157,7 @@ object SettingsForm: TSettingsForm
   TextHeight = 13
   object Bevel: TsBevel
     Left = 0
-    Top = 200
+    Top = 258
     Width = 326
     Height = 38
     Align = alBottom
@@ -168,7 +168,7 @@ object SettingsForm: TSettingsForm
   object SaveButton: TsButton
     Tag = 2
     Left = 243
-    Top = 208
+    Top = 266
     Width = 75
     Height = 25
     Align = alCustom
@@ -178,11 +178,12 @@ object SettingsForm: TSettingsForm
     TabOrder = 0
     OnClick = SaveButtonClick
     SkinData.SkinSection = 'BUTTON'
+    ExplicitTop = 208
   end
   object CancelButton: TsButton
     Tag = 3
     Left = 162
-    Top = 208
+    Top = 266
     Width = 75
     Height = 25
     Align = alCustom
@@ -191,11 +192,12 @@ object SettingsForm: TSettingsForm
     TabOrder = 1
     OnClick = aExitExecute
     SkinData.SkinSection = 'BUTTON'
+    ExplicitTop = 208
   end
   object OKButton: TsButton
     Tag = 4
     Left = 81
-    Top = 208
+    Top = 266
     Width = 75
     Height = 25
     Align = alCustom
@@ -204,28 +206,31 @@ object SettingsForm: TSettingsForm
     TabOrder = 2
     OnClick = OKButtonClick
     SkinData.SkinSection = 'BUTTON'
+    ExplicitTop = 208
   end
   object sPageControl: TsPageControl
     AlignWithMargins = True
     Left = 6
     Top = 6
     Width = 314
-    Height = 188
+    Height = 246
     Margins.Left = 6
     Margins.Top = 6
     Margins.Right = 6
     Margins.Bottom = 6
-    ActivePage = StatsTabSheet
+    ActivePage = SettingsTabSheet
     Align = alClient
     TabOrder = 3
     AccessibleDisabledPages = False
     SkinData.SkinSection = 'PAGECONTROL'
+    ExplicitHeight = 249
     object SettingsTabSheet: TsTabSheet
       Tag = 5
       Caption = 'Ustawienia'
       OnShow = SettingsTabSheetShow
       SkinData.CustomColor = False
       SkinData.CustomFont = False
+      ExplicitHeight = 160
       object NotificationLabel: TsLabel
         Tag = 7
         Left = 12
@@ -292,11 +297,11 @@ object SettingsForm: TSettingsForm
       object StatsCheckBox: TsCheckBox
         Tag = 11
         Left = 12
-        Top = 110
+        Top = 162
         Width = 265
         Height = 20
         Caption = 'Zbieraj statystyki sprawdzania wskazanych danych'
-        TabOrder = 3
+        TabOrder = 5
         OnClick = aAllowSaveExecute
         SkinData.SkinSection = 'CHECKBOX'
         ImgChecked = 0
@@ -305,13 +310,37 @@ object SettingsForm: TSettingsForm
       object FastStatsCheckBox: TsCheckBox
         Tag = 12
         Left = 24
-        Top = 136
+        Top = 188
         Width = 253
         Height = 20
         Caption = 'Pokazuj przycisk szybkiego dost'#281'pu do statystyk'
         Enabled = False
-        TabOrder = 4
+        TabOrder = 6
         OnClick = aAllowSaveExecute
+        SkinData.SkinSection = 'CHECKBOX'
+        ImgChecked = 0
+        ImgUnchecked = 0
+      end
+      object FrmSendNotificationCheckBox: TsCheckBox
+        Tag = 22
+        Left = 12
+        Top = 110
+        Width = 198
+        Height = 20
+        Caption = 'Pokazuj notyfikacj'#281' w oknie rozmowy'
+        TabOrder = 3
+        SkinData.SkinSection = 'CHECKBOX'
+        ImgChecked = 0
+        ImgUnchecked = 0
+      end
+      object SaveInArchiveCheckBox: TsCheckBox
+        Tag = 23
+        Left = 24
+        Top = 136
+        Width = 166
+        Height = 20
+        Caption = 'Zapisuj informacj'#281' w archiwum'
+        TabOrder = 4
         SkinData.SkinSection = 'CHECKBOX'
         ImgChecked = 0
         ImgUnchecked = 0
@@ -324,6 +353,7 @@ object SettingsForm: TSettingsForm
       OnShow = StatsTabSheetShow
       SkinData.CustomColor = False
       SkinData.CustomFont = False
+      ExplicitHeight = 221
       object ProgressPanel: TsPanel
         AlignWithMargins = True
         Left = 12
@@ -553,7 +583,7 @@ object SettingsForm: TSettingsForm
         Left = 12
         Top = 12
         Width = 282
-        Height = 113
+        Height = 171
         BoundLabel.Indent = 0
         BoundLabel.Font.Charset = DEFAULT_CHARSET
         BoundLabel.Font.Color = clWindowText
@@ -604,11 +634,12 @@ object SettingsForm: TSettingsForm
         ViewStyle = vsReport
         OnColumnClick = sListViewColumnClick
         OnCompare = sListViewCompare
+        ExplicitHeight = 174
       end
       object ReloadButton: TsButton
         Tag = 18
         Left = 219
-        Top = 131
+        Top = 189
         Width = 75
         Height = 25
         Align = alCustom
@@ -617,11 +648,12 @@ object SettingsForm: TSettingsForm
         TabOrder = 1
         OnClick = aGetDataFromXMLExecute
         SkinData.SkinSection = 'BUTTON'
+        ExplicitTop = 192
       end
       object DeleteButton: TsButton
         Tag = 19
         Left = 138
-        Top = 131
+        Top = 189
         Width = 75
         Height = 25
         Align = alCustom
@@ -632,11 +664,12 @@ object SettingsForm: TSettingsForm
         TabOrder = 2
         OnClick = DeleteButtonClick
         SkinData.SkinSection = 'BUTTON'
+        ExplicitTop = 192
       end
       object ExInfoCheckBox: TsCheckBox
         Tag = 20
         Left = 12
-        Top = 134
+        Top = 192
         Width = 120
         Height = 20
         Caption = 'Poka'#380' szczeg'#243#322'y'
@@ -647,6 +680,7 @@ object SettingsForm: TSettingsForm
         SkinData.SkinSection = 'CHECKBOX'
         ImgChecked = 0
         ImgUnchecked = 0
+        ExplicitTop = 195
       end
     end
   end
@@ -688,8 +722,7 @@ object SettingsForm: TSettingsForm
     ThirdParty.ThirdStaticText = ' '
     ThirdParty.ThirdNativePaint = ' '
     OnSysDlgInit = sSkinManagerSysDlgInit
-    Left = 32
-    Top = 208
+    Left = 200
   end
   object sSkinProvider: TsSkinProvider
     AddedTitle.Font.Charset = DEFAULT_CHARSET
@@ -699,11 +732,10 @@ object SettingsForm: TSettingsForm
     AddedTitle.Font.Style = []
     SkinData.SkinSection = 'FORM'
     TitleButtons = <>
-    Left = 64
-    Top = 208
+    Left = 232
   end
   object ActionList: TActionList
-    Top = 208
+    Left = 168
     object aExit: TAction
       Caption = 'aExit'
       ShortCut = 27
@@ -731,8 +763,7 @@ object SettingsForm: TSettingsForm
     end
   end
   object PopupMenu: TPopupMenu
-    Left = 96
-    Top = 208
+    Left = 264
     object aDeleteAll: TMenuItem
       Tag = 21
       Caption = 'Usu'#324' wszystko'
@@ -745,7 +776,6 @@ object SettingsForm: TSettingsForm
     Priority = tpNormal
     StopMode = smTerminate
     OnRun = RebuildXMLThreadComponentRun
-    Left = 128
-    Top = 208
+    Left = 296
   end
 end
