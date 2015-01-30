@@ -86,6 +86,7 @@ __published:	// IDE-managed Components
 	TsPanel *ProgressPanel;
 	TsCheckBox *FrmSendNotificationCheckBox;
 	TsCheckBox *SaveInArchiveCheckBox;
+	TAction *aDeleteItem;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormShow(TObject *Sender);
 	void __fastcall aExitExecute(TObject *Sender);
@@ -95,7 +96,6 @@ __published:	// IDE-managed Components
 	void __fastcall OKButtonClick(TObject *Sender);
 	void __fastcall aAllowSaveExecute(TObject *Sender);
 	void __fastcall aGetDataFromXMLExecute(TObject *Sender);
-	void __fastcall DeleteButtonClick(TObject *Sender);
 	void __fastcall sListViewCompare(TObject *Sender, TListItem *Item1, TListItem *Item2,
           int Data, int &Compare);
 	void __fastcall sListViewColumnClick(TObject *Sender, TListColumn *Column);
@@ -106,6 +106,7 @@ __published:	// IDE-managed Components
 	void __fastcall RebuildXMLThreadComponentRun(TIdThreadComponent *Sender);
 	void __fastcall sSkinManagerSysDlgInit(TacSysDlgData DlgData, bool &AllowSkinning);
 	void __fastcall sPageControlPageChanging(TObject *Sender, TsTabSheet *NewPage, bool &AllowChange);
+	void __fastcall aDeleteItemExecute(TObject *Sender);
 
 private:	// User declarations
 public:		// User declarations

@@ -659,7 +659,7 @@ object SettingsForm: TSettingsForm
         DropDownMenu = PopupMenu
         Style = bsSplitButton
         TabOrder = 2
-        OnClick = DeleteButtonClick
+        OnClick = aDeleteItemExecute
         SkinData.SkinSection = 'BUTTON'
       end
       object ExInfoCheckBox: TsCheckBox
@@ -751,6 +751,11 @@ object SettingsForm: TSettingsForm
     object aGetDataFromXML: TAction
       Caption = 'aGetDataFromXML'
       OnExecute = aGetDataFromXMLExecute
+    end
+    object aDeleteItem: TAction
+      Caption = 'aDeleteItem'
+      ShortCut = 46
+      OnExecute = aDeleteItemExecute
     end
     object aShowExtInfo: TAction
       Caption = 'aShowExtInfo'

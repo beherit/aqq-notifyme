@@ -209,36 +209,6 @@ void __fastcall TSettingsForm::aGetDataFromXMLExecute(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TSettingsForm::DeleteButtonClick(TObject *Sender)
-{
-  //Zaznaczono na liscie jakis element
-  if(sListView->ItemIndex!=-1)
-  {
-	//Wylaczenie komponentow
-	SettingsTabSheet->Enabled = false;
-	ExInfoCheckBox->Enabled = false;
-	DeleteButton->Enabled = false;
-	ReloadButton->Enabled = false;
-	//Usuwanie wybranego elementu z listy
-	sListView->Items->Item[sListView->ItemIndex]->Delete();
-	//Wczytanie grafiki postepu z aktywnej kompozycji
-	if(FileExists(GetThemeDir()+"////Graphics////ShortInfoURL.png"))
-	 ProgressImage->Picture->LoadFromFile(GetThemeDir()+"////Graphics////ShortInfoURL.png");
-	else if(FileExists(GetDefaultThemeDir()+"////Graphics////ShortInfoURL.png"))
-	 ProgressImage->Picture->LoadFromFile(GetDefaultThemeDir()+"////Graphics////ShortInfoURL.png");
-	//Ustawienie paska postepu
-	RebuildXMLProgressBar->Position = 0;
-	RebuildXMLProgressBar->Max = sListView->Items->Count;
-	if(ExInfoCheckBox->Checked)	ProgressPanel->Margins->Top = 52;
-	else ProgressPanel->Margins->Top = 12;
-	//Ukrycie listy
-	sListView->Visible = false;
-	//Wlaczenie watku przebudowy pliku XML
-	RebuildXMLThreadComponent->Start();
-  }
-}
-//---------------------------------------------------------------------------
-
 void __fastcall TSettingsForm::sListViewColumnClick(TObject *Sender, TListColumn *Column)
 {
   static bool SortParam = false;
@@ -370,6 +340,36 @@ void __fastcall TSettingsForm::sPageControlPageChanging(TObject *Sender, TsTabSh
 	Height = 327;
   }
   else aShowExtInfo->Execute();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TSettingsForm::aDeleteItemExecute(TObject *Sender)
+{
+  //Zaznaczono na liscie jakis element
+  if(sListView->ItemIndex!=-1)
+  {
+	//Wylaczenie komponentow
+	SettingsTabSheet->Enabled = false;
+	ExInfoCheckBox->Enabled = false;
+	DeleteButton->Enabled = false;
+	ReloadButton->Enabled = false;
+	//Usuwanie wybranego elementu z listy
+	sListView->Items->Item[sListView->ItemIndex]->Delete();
+	//Wczytanie grafiki postepu z aktywnej kompozycji
+	if(FileExists(GetThemeDir()+"////Graphics////ShortInfoURL.png"))
+	 ProgressImage->Picture->LoadFromFile(GetThemeDir()+"////Graphics////ShortInfoURL.png");
+	else if(FileExists(GetDefaultThemeDir()+"////Graphics////ShortInfoURL.png"))
+	 ProgressImage->Picture->LoadFromFile(GetDefaultThemeDir()+"////Graphics////ShortInfoURL.png");
+	//Ustawienie paska postepu
+	RebuildXMLProgressBar->Position = 0;
+	RebuildXMLProgressBar->Max = sListView->Items->Count;
+	if(ExInfoCheckBox->Checked)	ProgressPanel->Margins->Top = 52;
+	else ProgressPanel->Margins->Top = 12;
+	//Ukrycie listy
+	sListView->Visible = false;
+	//Wlaczenie watku przebudowy pliku XML
+	RebuildXMLThreadComponent->Start();
+  }
 }
 //---------------------------------------------------------------------------
 
