@@ -99,13 +99,14 @@ __published:	// IDE-managed Components
 	void __fastcall sListViewCompare(TObject *Sender, TListItem *Item1, TListItem *Item2,
           int Data, int &Compare);
 	void __fastcall sListViewColumnClick(TObject *Sender, TListColumn *Column);
-	void __fastcall SettingsTabSheetShow(TObject *Sender);
 	void __fastcall StatsTabSheetShow(TObject *Sender);
 	void __fastcall aShowExtInfoExecute(TObject *Sender);
 	void __fastcall ExInfoCheckBoxClick(TObject *Sender);
 	void __fastcall aDeleteAllClick(TObject *Sender);
 	void __fastcall RebuildXMLThreadComponentRun(TIdThreadComponent *Sender);
 	void __fastcall sSkinManagerSysDlgInit(TacSysDlgData DlgData, bool &AllowSkinning);
+	void __fastcall sPageControlPageChanging(TObject *Sender, TsTabSheet *NewPage, bool &AllowChange);
+
 private:	// User declarations
 public:		// User declarations
 	__fastcall TSettingsForm(TComponent* Owner);

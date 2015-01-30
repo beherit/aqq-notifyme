@@ -263,19 +263,8 @@ void __fastcall TSettingsForm::sListViewCompare(TObject *Sender, TListItem *Item
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TSettingsForm::SettingsTabSheetShow(TObject *Sender)
-{
-  //Szerokosc formy
-  Width = 332;
-  //Wysokosc formy
-  Height = 327;
-}
-//---------------------------------------------------------------------------
-
 void __fastcall TSettingsForm::StatsTabSheetShow(TObject *Sender)
 {
-  //Pokazywanie dodatkowych danych
-  aShowExtInfo->Execute();
   //Pobranie danych z pliku XML
   aGetDataFromXML->Execute();
 }
@@ -367,6 +356,20 @@ void __fastcall TSettingsForm::RebuildXMLThreadComponentRun(TIdThreadComponent *
 void __fastcall TSettingsForm::sSkinManagerSysDlgInit(TacSysDlgData DlgData, bool &AllowSkinning)
 {
   AllowSkinning = false;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TSettingsForm::sPageControlPageChanging(TObject *Sender, TsTabSheet *NewPage,
+          bool &AllowChange)
+{
+  if(NewPage->Name=="SettingsTabSheet")
+  {
+	//Szerokosc formy
+	Width = 332;
+	//Wysokosc formy
+	Height = 327;
+  }
+  else aShowExtInfo->Execute();
 }
 //---------------------------------------------------------------------------
 

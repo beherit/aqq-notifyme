@@ -220,16 +220,12 @@ object SettingsForm: TSettingsForm
     TabOrder = 3
     AccessibleDisabledPages = False
     SkinData.SkinSection = 'PAGECONTROL'
+    OnPageChanging = sPageControlPageChanging
     object SettingsTabSheet: TsTabSheet
       Tag = 5
       Caption = 'Ustawienia'
-      OnShow = SettingsTabSheetShow
       SkinData.CustomColor = False
       SkinData.CustomFont = False
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object NotificationLabel: TsLabel
         Tag = 7
         Left = 12
@@ -356,10 +352,6 @@ object SettingsForm: TSettingsForm
       OnShow = StatsTabSheetShow
       SkinData.CustomColor = False
       SkinData.CustomFont = False
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object ProgressPanel: TsPanel
         AlignWithMargins = True
         Left = 12
@@ -561,13 +553,15 @@ object SettingsForm: TSettingsForm
           AlignWithMargins = True
           Left = 1
           Top = 75
-          Width = 165
-          Height = 13
+          Width = 280
+          Height = 14
           Margins.Left = 0
           Margins.Right = 0
           Align = alClient
           Alignment = taCenter
           Caption = 'Przebudowa pliku XML statystyk...'
+          ExplicitWidth = 165
+          ExplicitHeight = 13
         end
         object RebuildXMLProgressBar: TsProgressBar
           AlignWithMargins = True
