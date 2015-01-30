@@ -152,6 +152,11 @@ int GetSaturation()
   return (int)PluginLink.CallService(AQQ_SYSTEM_COLORGETSATURATION,0,0);
 }
 //---------------------------------------------------------------------------
+int GetBrightness()
+{
+  return (int)PluginLink.CallService(AQQ_SYSTEM_COLORGETBRIGHTNESS,0,0);
+}
+//---------------------------------------------------------------------------
 
 //Pobieranie pseudonimu kontaktu podajac jego JID
 UnicodeString GetContactNick(UnicodeString JID)
@@ -334,8 +339,10 @@ INT_PTR __stdcall OnColorChange(WPARAM wParam, LPARAM lParam)
 	//Wlaczona zaawansowana stylizacja okien
 	if(ChkSkinEnabled())
 	{
-	  hSettingsForm->sSkinManager->HueOffset = wParam;
-	  hSettingsForm->sSkinManager->Saturation = lParam;
+	  TPluginColorChange ColorChange = *(PPluginColorChange)wParam;
+	  hSettingsForm->sSkinManager->HueOffset = ColorChange.Hue;
+	  hSettingsForm->sSkinManager->Saturation = ColorChange.Saturation;
+	  hSettingsForm->sSkinManager->Brightness = ColorChange.Brightness;
 	}
   }
 
@@ -455,7 +462,8 @@ INT_PTR __stdcall OnThemeChanged(WPARAM wParam, LPARAM lParam)
 		hSettingsForm->sSkinManager->Effects->AllowGlowing = ChkThemeGlowing();
 		//Zmiana kolorystyki AlphaControls
         hSettingsForm->sSkinManager->HueOffset = GetHUE();
-	    hSettingsForm->sSkinManager->Saturation = GetSaturation();
+		hSettingsForm->sSkinManager->Saturation = GetSaturation();
+		hSettingsForm->sSkinManager->Brightness = GetBrightness();
 		//Aktywacja skorkowania AlphaControls
 		hSettingsForm->sSkinManager->Active = true;
 	  }
@@ -765,7 +773,7 @@ extern "C" INT_PTR __declspec(dllexport) __stdcall Load(PPluginLink Link)
   //Odczyt ustawien
   LoadSettings();
   //Hook na zmiane kolorystyki AlphaControls
-  PluginLink.HookEvent(AQQ_SYSTEM_COLORCHANGE,OnColorChange);
+  PluginLink.HookEvent(AQQ_SYSTEM_COLORCHANGEV2,OnColorChange);
   //Hook na zmianê stanu kontaktu
   PluginLink.HookEvent(AQQ_CONTACTS_UPDATE,OnContactsUpdate);
   //Hook na zmiane lokalizacji
@@ -775,7 +783,7 @@ extern "C" INT_PTR __declspec(dllexport) __stdcall Load(PPluginLink Link)
   //Hook na enumeracje listy kontatkow
   PluginLink.HookEvent(AQQ_CONTACTS_REPLYLIST,OnReplyList);
   //Hook na zmiane kompozycji
-  PluginLink.HookEvent(AQQ_SYSTEM_THEMECHANGED, OnThemeChanged);
+  PluginLink.HookEvent(AQQ_SYSTEM_THEMECHANGED,OnThemeChanged);
   //Hook na odbieranie pakietow XML zawierajace ID
   PluginLink.HookEvent(AQQ_SYSTEM_XMLIDDEBUG,OnXMLIDDebug);
   //Wszystkie moduly zostaly zaladowane
