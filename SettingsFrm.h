@@ -96,8 +96,7 @@ __published:	// IDE-managed Components
 	void __fastcall OKButtonClick(TObject *Sender);
 	void __fastcall aAllowSaveExecute(TObject *Sender);
 	void __fastcall aGetDataFromXMLExecute(TObject *Sender);
-	void __fastcall sListViewCompare(TObject *Sender, TListItem *Item1, TListItem *Item2,
-          int Data, int &Compare);
+	void __fastcall sListViewCompare(TObject *Sender, TListItem *Item1, TListItem *Item2, int Data, int &Compare);
 	void __fastcall sListViewColumnClick(TObject *Sender, TListColumn *Column);
 	void __fastcall StatsTabSheetShow(TObject *Sender);
 	void __fastcall aShowExtInfoExecute(TObject *Sender);
@@ -107,7 +106,6 @@ __published:	// IDE-managed Components
 	void __fastcall sSkinManagerSysDlgInit(TacSysDlgData DlgData, bool &AllowSkinning);
 	void __fastcall sPageControlPageChanging(TObject *Sender, TsTabSheet *NewPage, bool &AllowChange);
 	void __fastcall aDeleteItemExecute(TObject *Sender);
-
 private:	// User declarations
 public:		// User declarations
 	__fastcall TSettingsForm(TComponent* Owner);
