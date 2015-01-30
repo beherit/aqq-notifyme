@@ -52,6 +52,7 @@ __declspec(dllimport)bool ChkThemeAnimateWindows();
 __declspec(dllimport)bool ChkThemeGlowing();
 __declspec(dllimport)int GetHUE();
 __declspec(dllimport)int GetSaturation();
+__declspec(dllimport)int GetBrightness();
 __declspec(dllimport)void LoadSettings();
 __declspec(dllimport)void SaveInfoToStatsFileEx(UnicodeString JID, UnicodeString Nick, UnicodeString Type, UnicodeString Target, UnicodeString Time);
 //---------------------------------------------------------------------------
@@ -90,6 +91,7 @@ void __fastcall TSettingsForm::FormCreate(TObject *Sender)
 	  //Zmiana kolorystyki AlphaControls
 	  sSkinManager->HueOffset = GetHUE();
 	  sSkinManager->Saturation = GetSaturation();
+	  sSkinManager->Brightness = GetBrightness();
 	  //Aktywacja skorkowania AlphaControls
 	  sSkinManager->Active = true;
 	}
