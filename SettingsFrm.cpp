@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------
-// Copyright (C) 2013-2014 Krzysztof Grochocki
+// Copyright (C) 2013-2015 Krzysztof Grochocki
 //
 // This file is part of NotifyMe
 //
@@ -242,31 +242,41 @@ void __fastcall TSettingsForm::StatsTabSheetShow(TObject *Sender)
 
 void __fastcall TSettingsForm::aShowExtInfoExecute(TObject *Sender)
 {
-  //Szczegolowe informacje
-  if(ExInfoCheckBox->Checked)
+  if(sPageControl->ActivePage==SettingsTabSheet)
   {
-	//Margines panelu postepu
-	ProgressPanel->Margins->Top = 52;
-	//Szerokosc formy
-	Width = 512;
-	//Wysokosc formy
-	Height = 412;
-	//Szerokosc kolumn
-	sListView->Column[1]->Width = 90;
-	sListView->Column[4]->Width = 90;
-  }
-  //Brak szczegolowych informacji
-  else
-  {
-	//Margines panelu postepu
-	ProgressPanel->Margins->Top = 12;
 	//Szerokosc formy
 	Width = 332;
 	//Wysokosc formy
 	Height = 327;
-	//Szerokosc kolumn
-	sListView->Column[1]->Width = 0;
-	sListView->Column[4]->Width = 0;
+  }
+  else
+  {
+	//Szczegolowe informacje
+	if(ExInfoCheckBox->Checked)
+	{
+	  //Margines panelu postepu
+	  ProgressPanel->Margins->Top = 52;
+	  //Szerokosc formy
+	  Width = 512;
+	  //Wysokosc formy
+	  Height = 412;
+	  //Szerokosc kolumn
+	  sListView->Column[1]->Width = 90;
+	  sListView->Column[4]->Width = 90;
+	}
+	//Brak szczegolowych informacji
+	else
+	{
+	  //Margines panelu postepu
+	  ProgressPanel->Margins->Top = 12;
+	  //Szerokosc formy
+	  Width = 332;
+	  //Wysokosc formy
+	  Height = 327;
+	  //Szerokosc kolumn
+	  sListView->Column[1]->Width = 0;
+	  sListView->Column[4]->Width = 0;
+    }
   }
 }
 //---------------------------------------------------------------------------
@@ -332,14 +342,8 @@ void __fastcall TSettingsForm::sSkinManagerSysDlgInit(TacSysDlgData DlgData, boo
 void __fastcall TSettingsForm::sPageControlPageChanging(TObject *Sender, TsTabSheet *NewPage,
           bool &AllowChange)
 {
-  if(NewPage->Name=="SettingsTabSheet")
-  {
-	//Szerokosc formy
-	Width = 332;
-	//Wysokosc formy
-	Height = 327;
-  }
-  else aShowExtInfo->Execute();
+  //Pokazywanie dodatkowych danych
+  aShowExtInfo->Execute();
 }
 //---------------------------------------------------------------------------
 
