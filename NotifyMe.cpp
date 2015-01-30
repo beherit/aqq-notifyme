@@ -724,20 +724,20 @@ extern "C" INT_PTR __declspec(dllexport) __stdcall Load(PPluginLink Link)
    ExtractRes((PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\Const.lng").w_str(),L"EN_CONST",L"DATA");
   else if(MD5File(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\Const.lng")!="FAB7435FEF90C1CC68D7F2AC92815F36")
    ExtractRes((PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\Const.lng").w_str(),L"EN_CONST",L"DATA");
-  //E7C92D9549F8693033AA4407EDE86195
+  //0D0CA92652D1435B5DB2E035AA9C088F
   if(!FileExists(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\TSettingsForm.lng"))
    ExtractRes((PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\TSettingsForm.lng").w_str(),L"EN_SETTINGSFRM",L"DATA");
-  else if(MD5File(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\TSettingsForm.lng")!="E7C92D9549F8693033AA4407EDE86195")
+  else if(MD5File(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\TSettingsForm.lng")!="0D0CA92652D1435B5DB2E035AA9C088F")
    ExtractRes((PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\TSettingsForm.lng").w_str(),L"EN_SETTINGSFRM",L"DATA");
   //399F5F05929FA99B6A2F6C624D0FCECD
   if(!FileExists(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\PL\\\\Const.lng"))
    ExtractRes((PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\PL\\\\Const.lng").w_str(),L"PL_CONST",L"DATA");
   else if(MD5File(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\PL\\\\Const.lng")!="399F5F05929FA99B6A2F6C624D0FCECD")
    ExtractRes((PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\PL\\\\Const.lng").w_str(),L"PL_CONST",L"DATA");
-  //A68514FE278BAA195967EAE09D0CD1A7
+  //4EFD8428E00EFD63B4D0C213DCA1005E
   if(!FileExists(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\PL\\\\TSettingsForm.lng"))
    ExtractRes((PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\PL\\\\TSettingsForm.lng").w_str(),L"PL_SETTINGSFRM",L"DATA");
-  else if(MD5File(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\PL\\\\TSettingsForm.lng")!="A68514FE278BAA195967EAE09D0CD1A7")
+  else if(MD5File(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\PL\\\\TSettingsForm.lng")!="4EFD8428E00EFD63B4D0C213DCA1005E")
    ExtractRes((PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\PL\\\\TSettingsForm.lng").w_str(),L"PL_SETTINGSFRM",L"DATA");
   //Ustawienie sciezki lokalizacji wtyczki
   UnicodeString LangCode = (wchar_t*)PluginLink.CallService(AQQ_FUNCTION_GETLANGCODE,0,0);

@@ -550,6 +550,7 @@ object SettingsForm: TSettingsForm
           ExplicitHeight = 64
         end
         object RebuildXMLLabel: TsLabel
+          Tag = 24
           AlignWithMargins = True
           Left = 1
           Top = 75
