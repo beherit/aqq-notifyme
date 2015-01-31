@@ -522,13 +522,13 @@ INT_PTR __stdcall OnXMLIDDebug(WPARAM wParam, LPARAM lParam)
 						if((From!=GetAccountJID(XMLChunk.UserIdx))&&(From!=GetAccountJIDW(XMLChunk.UserIdx)))
 						{
 							//Zabezpieczenie przed spamem
-							if(!AntySpamList->ValueExists("Version",From))
+							if(!AntySpamList->ValueExists("Version",From+"/"+Res+":"+UserIdx))
 							{
 								//Wygenerowanie losowego ID timera
 								int TimerID = PluginLink.CallService(AQQ_FUNCTION_GETNUMID,0,0);
 								//Zapisanie informacji o wywolaniu
-								AntySpamList->WriteInteger("Version",From,TimerID);
-								AntySpamList->WriteString("Version",TimerID,From);
+								AntySpamList->WriteInteger("Version",From+"/"+Res+":"+UserIdx,TimerID);
+								AntySpamList->WriteString("Version",TimerID,From+"/"+Res+":"+UserIdx);
 								//Wlaczenie timera
 								SetTimer(hTimerFrm,TimerID,5000,(TIMERPROC)TimerFrmProc);
 								//Ustawianie tekstu notyfikacji
@@ -560,13 +560,13 @@ INT_PTR __stdcall OnXMLIDDebug(WPARAM wParam, LPARAM lParam)
 						if((From!=GetAccountJID(XMLChunk.UserIdx))&&(From!=GetAccountJIDW(XMLChunk.UserIdx)))
 						{
 							//Zabezpieczenie przed spamem
-							if(!AntySpamList->ValueExists("Last",From))
+							if(!AntySpamList->ValueExists("Last",From+"/"+Res+":"+UserIdx))
 							{
 								//Wygenerowanie losowego ID timera
 								int TimerID = PluginLink.CallService(AQQ_FUNCTION_GETNUMID,0,0);
 								//Zapisanie informacji o wywolaniu
-								AntySpamList->WriteInteger("Last",From,TimerID);
-								AntySpamList->WriteString("Last",TimerID,From);
+								AntySpamList->WriteInteger("Last",From+"/"+Res+":"+UserIdx,TimerID);
+								AntySpamList->WriteString("Last",TimerID,From+"/"+Res+":"+UserIdx);
 								//Wlaczenie timera
 								SetTimer(hTimerFrm,TimerID,5000,(TIMERPROC)TimerFrmProc);
 								//Ustawianie tekstu notyfikacji
