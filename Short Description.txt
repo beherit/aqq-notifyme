@@ -1,1 +1,4 @@
+PL:
 Wtyczka powiadamia o sprawdzaniu naszej wersji oprogramowania oraz ostatniej aktywnoœci przez innego u¿ytkownika.
+EN:
+Pluging notify checking your version of the software and last activity by another user.

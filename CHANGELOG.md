@@ -1,3 +1,12 @@
+1.2.0.0
+-----
+* Obsługa lokalizacji (polskiej i angielskiej).
+* Pełne wsparcie kolorystyki stylizacji okien.
+* Pokazywanie notyfikacji w oknie rozmowy.
+* Poprawki zmiany kart przy aktywnym pokazywaniu szczegółów statystyk.
+* Poprawki w filtrze antyspamowym.
+* Aktualizacja komponentów AlphaControls do nowszej wersji (9.19).
+
 1.1.6.0
 -----
 * Nieskórkowanie systemowych okien dialogowych niepochodzących z wtyczki.
