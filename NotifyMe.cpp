@@ -721,10 +721,10 @@ extern "C" INT_PTR __declspec(dllexport) __stdcall Load(PPluginLink Link)
 		ExtractRes((PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\Const.lng").w_str(),L"EN_CONST",L"DATA");
 	else if(MD5File(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\Const.lng")!="FAB7435FEF90C1CC68D7F2AC92815F36")
 		ExtractRes((PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\Const.lng").w_str(),L"EN_CONST",L"DATA");
-	//0D0CA92652D1435B5DB2E035AA9C088F
+	//148EC06F41518E3A8ABA2FFB184CE7A4
 	if(!FileExists(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\TSettingsForm.lng"))
 		ExtractRes((PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\TSettingsForm.lng").w_str(),L"EN_SETTINGSFRM",L"DATA");
-	else if(MD5File(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\TSettingsForm.lng")!="0D0CA92652D1435B5DB2E035AA9C088F")
+	else if(MD5File(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\TSettingsForm.lng")!="148EC06F41518E3A8ABA2FFB184CE7A4")
 		ExtractRes((PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\EN\\\\TSettingsForm.lng").w_str(),L"EN_SETTINGSFRM",L"DATA");
 	//399F5F05929FA99B6A2F6C624D0FCECD
 	if(!FileExists(PluginUserDir+"\\\\Languages\\\\NotifyMe\\\\PL\\\\Const.lng"))
@@ -852,7 +852,7 @@ extern "C" PPluginInfo __declspec(dllexport) __stdcall AQQPluginInfo(DWORD AQQVe
 {
 	PluginInfo.cbSize = sizeof(TPluginInfo);
 	PluginInfo.ShortName = L"NotifyMe";
-	PluginInfo.Version = PLUGIN_MAKE_VERSION(1,2,0,0);
+	PluginInfo.Version = PLUGIN_MAKE_VERSION(1,2,0,2);
 	PluginInfo.Description = L"Powiadamia o sprawdzaniu naszej wersji oprogramowania oraz ostatniej aktywnoœci przez innego u¿ytkownika.";
 	PluginInfo.Author = L"Krzysztof Grochocki";
 	PluginInfo.AuthorMail = L"kontakt@beherit.pl";
