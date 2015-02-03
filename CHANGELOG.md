@@ -1,3 +1,7 @@
+1.2.0.2
+-----
+* Drobna aktualizacja angielskiej lokalizacji.
+
 1.2.0.0
 -----
 * Obsługa lokalizacji (polskiej i angielskiej).
