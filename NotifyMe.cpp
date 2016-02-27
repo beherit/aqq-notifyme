@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------
-// Copyright (C) 2013-2015 Krzysztof Grochocki
+// Copyright (C) 2013-2016 Krzysztof Grochocki
 //
 // This file is part of NotifyMe
 //
@@ -853,9 +853,9 @@ extern "C" PPluginInfo __declspec(dllexport) __stdcall AQQPluginInfo(DWORD AQQVe
 	PluginInfo.Version = PLUGIN_MAKE_VERSION(1,2,0,2);
 	PluginInfo.Description = L"Powiadamia o sprawdzaniu naszej wersji oprogramowania oraz ostatniej aktywnoœci przez innego u¿ytkownika.";
 	PluginInfo.Author = L"Krzysztof Grochocki";
-	PluginInfo.AuthorMail = L"kontakt@beherit.pl";
+	PluginInfo.AuthorMail = L"contact@beherit.pl";
 	PluginInfo.Copyright = L"Krzysztof Grochocki";
-	PluginInfo.Homepage = L"http://beherit.pl";
+	PluginInfo.Homepage = L"beherit.pl";
 	PluginInfo.Flag = 0;
 	PluginInfo.ReplaceDefaultModule = 0;
 
